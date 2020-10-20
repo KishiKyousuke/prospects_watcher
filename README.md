@@ -1,24 +1,5 @@
-# README
+# ProspectsWatcher
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Prospects Watcherは、複数のプロ野球選手の個人成績を確認する事ができる個人成績確認ツールです。
+一般的なプロ野球情報サイトとは異なり、チームをまたいでお気に入りの選手の成績を一覧画面で確認することができます。
+注目選手を登録してあなただけの個人成績一覧を作成頂けます。
