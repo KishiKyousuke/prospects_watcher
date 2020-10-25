@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_22_062923) do
+ActiveRecord::Schema.define(version: 2020_10_25_094241) do
 
   create_table "batters", force: :cascade do |t|
     t.string "number"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 2020_10_22_062923) do
     t.integer "strikeout"
     t.string "innings_pitched"
     t.integer "pitched"
-    t.integer "save"
+    t.integer "number_of_save"
     t.integer "hold_point"
     t.float "strikeouts_per_nine_innings"
     t.float "strikeout_to_walk_ratio"
