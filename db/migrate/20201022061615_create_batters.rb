@@ -1,6 +1,6 @@
 class CreateBatters < ActiveRecord::Migration[6.0]
   def change
-    create_table :favorite_batters do |t|
+    create_table :batters do |t|
       t.string :number
       t.string :name
       t.string :team
