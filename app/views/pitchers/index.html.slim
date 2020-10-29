@@ -1,6 +1,5 @@
 h1
   | ピッチャー一覧
-= link_to "投手一覧へ", pitchers_path
 table
   thead
     tr
@@ -68,3 +67,7 @@ table
           = pitcher.walks_and_hits_per_innings_pitched
         td
           = pitcher.updated_at
+        td
+          = link_to "登録", pitcher_favorite_pitchers_path(pitcher), method: :post
+
+

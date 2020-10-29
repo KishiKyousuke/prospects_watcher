@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_27_080218) do
+ActiveRecord::Schema.define(version: 2020_10_29_060313) do
 
   create_table "batters", force: :cascade do |t|
     t.string "number"
@@ -29,6 +29,24 @@ ActiveRecord::Schema.define(version: 2020_10_27_080218) do
     t.integer "error"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "favorite_batters", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "batter_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["batter_id"], name: "index_favorite_batters_on_batter_id"
+    t.index ["user_id"], name: "index_favorite_batters_on_user_id"
+  end
+
+  create_table "favorite_pitchers", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "pitcher_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["pitcher_id"], name: "index_favorite_pitchers_on_pitcher_id"
+    t.index ["user_id"], name: "index_favorite_pitchers_on_user_id"
   end
 
   create_table "pitchers", force: :cascade do |t|
@@ -62,4 +80,8 @@ ActiveRecord::Schema.define(version: 2020_10_27_080218) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "favorite_batters", "batters"
+  add_foreign_key "favorite_batters", "users"
+  add_foreign_key "favorite_pitchers", "pitchers"
+  add_foreign_key "favorite_pitchers", "users"
 end
