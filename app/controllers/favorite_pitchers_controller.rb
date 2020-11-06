@@ -4,13 +4,13 @@ class FavoritePitchersController < ApplicationController
 
   def create
     @favorite_pitcher = FavoritePitcher.create(user_id: current_user.id, pitcher_id: @pitcher.id)
-    redirect_to user_path(current_user), notice: '選手を登録しました'
+    redirect_to registered_players_path, notice: '選手を登録しました'
   end
 
   def destroy
     @favorite_pitcher = FavoritePitcher.find_by(user_id: current_user.id, pitcher_id: @pitcher.id)
     @favorite_pitcher.destroy
-    redirect_to user_path(current_user), notice: '選手を登録解除しました'
+    redirect_to registered_players_path, notice: '選手を登録解除しました'
   end
 
   private

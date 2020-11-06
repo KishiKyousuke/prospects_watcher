@@ -6,9 +6,10 @@ Rails.application.routes.draw do
   resources :batters, only: [:index] do
     resource :favorite_batters, only: [:create, :destroy]
   end
-  resources :users, only: [:show, :edit, :update] do
+  resources :users, only: [:edit, :update] do
     get :favorite_batters, on: :collection
     get :favorite_pitchers, on: :collection
   end
-  root 'users#show'
+  resources :registered_players, only: :index
+  root 'registered_players#index'
 end

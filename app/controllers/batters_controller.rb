@@ -2,7 +2,7 @@ class BattersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @favorite_batters = Batter.all
+    @batters = Batter.all
   end
 
   def create
