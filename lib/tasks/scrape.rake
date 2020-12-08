@@ -1,22 +1,23 @@
 require 'open-uri'
 require 'nokogiri'
 
+PLAYERS_SCORE_URL = { '西武' => 'https://baseball.yahoo.co.jp/npb/teams/7/memberlist?kind=',
+                      'ソフトバンク' => 'https://baseball.yahoo.co.jp/npb/teams/12/memberlist?kind=',
+                      '楽天' => 'https://baseball.yahoo.co.jp/npb/teams/376/memberlist?kind=',
+                      'ロッテ' => 'https://baseball.yahoo.co.jp/npb/teams/9/memberlist?kind=',
+                      '日本ハム' => 'https://baseball.yahoo.co.jp/npb/teams/8/memberlist?kind=',
+                      'オリックス' => 'https://baseball.yahoo.co.jp/npb/teams/11/memberlist?kind=',
+                      '巨人' => 'https://baseball.yahoo.co.jp/npb/teams/1/memberlist?kind=',
+                      'DeNA' => 'https://baseball.yahoo.co.jp/npb/teams/3/memberlist?kind=',
+                      '阪神' => 'https://baseball.yahoo.co.jp/npb/teams/5/memberlist?kind=',
+                      '広島' => 'https://baseball.yahoo.co.jp/npb/teams/6/memberlist?kind=',
+                      '中日' => 'https://baseball.yahoo.co.jp/npb/teams/4/memberlist?kind=',
+                      'ヤクルト' => 'https://baseball.yahoo.co.jp/npb/teams/2/memberlist?kind=' }.freeze
+
 namespace :scrape do
   desc 'Yahooスポーツから野手の成績を取得'
   task batter_record: :environment do
-    batter_score_url = { '西武' => 'https://baseball.yahoo.co.jp/npb/teams/7/memberlist?kind=b',
-                         'ソフトバンク' => 'https://baseball.yahoo.co.jp/npb/teams/12/memberlist?kind=b',
-                         '楽天' => 'https://baseball.yahoo.co.jp/npb/teams/376/memberlist?kind=b',
-                         'ロッテ' => 'https://baseball.yahoo.co.jp/npb/teams/9/memberlist?kind=b',
-                         '日本ハム' => 'https://baseball.yahoo.co.jp/npb/teams/8/memberlist?kind=b',
-                         'オリックス' => 'https://baseball.yahoo.co.jp/npb/teams/11/memberlist?kind=b',
-                         '巨人' => 'https://baseball.yahoo.co.jp/npb/teams/1/memberlist?kind=b',
-                         'DeNA' => 'https://baseball.yahoo.co.jp/npb/teams/3/memberlist?kind=b',
-                         '阪神' => 'https://baseball.yahoo.co.jp/npb/teams/5/memberlist?kind=b',
-                         '広島' => 'https://baseball.yahoo.co.jp/npb/teams/6/memberlist?kind=b',
-                         '中日' => 'https://baseball.yahoo.co.jp/npb/teams/4/memberlist?kind=b',
-                         'ヤクルト' => 'https://baseball.yahoo.co.jp/npb/teams/2/memberlist?kind=b' }
-
+    batter_score_url = PLAYERS_SCORE_URL.map { |key, value| [key, value + 'b'] }.to_h
     batter_score_url.each do |team, url|
       charset = nil
       html = URI.open(url) do |f|
@@ -34,6 +35,7 @@ namespace :scrape do
         end
         players_score << data unless data.empty?
       end
+
       players_score.map do |player_score|
         batter = Batter.find_or_initialize_by(name: player_score[1], team: team)
         batter.update(number: player_score[0],
@@ -56,19 +58,7 @@ namespace :scrape do
 
   desc 'Yahooスポーツから投手の成績を取得'
   task pitcher_record: :environment do
-    pitcher_score_url = { '西武' => 'https://baseball.yahoo.co.jp/npb/teams/7/memberlist?kind=p',
-                          'ソフトバンク' => 'https://baseball.yahoo.co.jp/npb/teams/12/memberlist?kind=p',
-                          '楽天' => 'https://baseball.yahoo.co.jp/npb/teams/376/memberlist?kind=p',
-                          'ロッテ' => 'https://baseball.yahoo.co.jp/npb/teams/9/memberlist?kind=p',
-                          '日本ハム' => 'https://baseball.yahoo.co.jp/npb/teams/8/memberlist?kind=p',
-                          'オリックス' => 'https://baseball.yahoo.co.jp/npb/teams/11/memberlist?kind=p',
-                          '巨人' => 'https://baseball.yahoo.co.jp/npb/teams/1/memberlist?kind=p',
-                          'DeNA' => 'https://baseball.yahoo.co.jp/npb/teams/3/memberlist?kind=p',
-                          '阪神' => 'https://baseball.yahoo.co.jp/npb/teams/5/memberlist?kind=p',
-                          '広島' => 'https://baseball.yahoo.co.jp/npb/teams/6/memberlist?kind=p',
-                          '中日' => 'https://baseball.yahoo.co.jp/npb/teams/4/memberlist?kind=p',
-                          'ヤクルト' => 'https://baseball.yahoo.co.jp/npb/teams/2/memberlist?kind=p' }
-
+    pitcher_score_url = PLAYERS_SCORE_URL.map { |key, value| [key, value + 'p'] }.to_h
     pitcher_score_url.each do |team, url|
       charset = nil
       html = URI.open(url) do |f|
@@ -86,6 +76,9 @@ namespace :scrape do
         end
         players_score << data unless data.empty?
       end
+
+      binding.pry
+
       players_score.map do |player_score|
         pitcher = Pitcher.find_or_initialize_by(name: player_score[1], team: team)
         pitcher.update(number: player_score[0],
