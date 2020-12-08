@@ -31,27 +31,29 @@ namespace :scrape do
       table.search('tr').each do |node|
         data = []
         node.search('td').each do |n|
+          data.push(n.at_css('a')[:href]) if n.at_css('a')
           data << n.text.gsub(/\n/, '').lstrip
         end
         players_score << data unless data.empty?
       end
 
       players_score.map do |player_score|
-        batter = Batter.find_or_initialize_by(name: player_score[1], team: team)
+        batter = Batter.find_or_initialize_by(url: player_score[1])
         batter.update(number: player_score[0],
-                      name: player_score[1],
+                      url: player_score[1],
+                      name: player_score[2],
                       team: team,
-                      batting_average: player_score[2],
-                      home_run: player_score[9],
-                      runs_batted_in: player_score[11],
-                      stolen_base: player_score[18],
-                      on_base_percentage: player_score[21],
-                      on_base_plus_slugging: player_score[23],
-                      walks: player_score[14],
-                      hit_by_pitch: player_score[15],
-                      scoring_position_batting_average: player_score[24],
-                      strikeout: player_score[13],
-                      error: player_score[25])
+                      batting_average: player_score[3],
+                      home_run: player_score[10],
+                      runs_batted_in: player_score[12],
+                      stolen_base: player_score[19],
+                      on_base_percentage: player_score[22],
+                      on_base_plus_slugging: player_score[24],
+                      walks: player_score[15],
+                      hit_by_pitch: player_score[16],
+                      scoring_position_batting_average: player_score[25],
+                      strikeout: player_score[14],
+                      error: player_score[26])
       end
     end
   end
@@ -72,29 +74,29 @@ namespace :scrape do
       table.search('tr').each do |node|
         data = []
         node.search('td').each do |n|
+          data.push(n.at_css('a')[:href]) if n.at_css('a')
           data << n.text.gsub(/\n/, '').lstrip
         end
         players_score << data unless data.empty?
       end
 
-      binding.pry
-
       players_score.map do |player_score|
-        pitcher = Pitcher.find_or_initialize_by(name: player_score[1], team: team)
+        pitcher = Pitcher.find_or_initialize_by(url: player_score[1])
         pitcher.update(number: player_score[0],
-                       name: player_score[1],
+                       url: player_score[1],
+                       name: player_score[2],
                        team: team,
-                       earned_run_average: player_score[2],
-                       win: player_score[8],
-                       lose: player_score[9],
-                       strikeout: player_score[17],
-                       innings_pitched: player_score[14],
-                       pitched: player_score[3],
-                       number_of_save: player_score[12],
-                       hold_point: player_score[11],
-                       strikeouts_per_nine_innings: player_score[18],
-                       strikeout_to_walk_ratio: player_score[26],
-                       walks_and_hits_per_innings_pitched: player_score[27])
+                       earned_run_average: player_score[3],
+                       win: player_score[9],
+                       lose: player_score[10],
+                       strikeout: player_score[18],
+                       innings_pitched: player_score[15],
+                       pitched: player_score[4],
+                       number_of_save: player_score[13],
+                       hold_point: player_score[12],
+                       strikeouts_per_nine_innings: player_score[19],
+                       strikeout_to_walk_ratio: player_score[27],
+                       walks_and_hits_per_innings_pitched: player_score[28])
       end
     end
   end
