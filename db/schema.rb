@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_29_060313) do
+ActiveRecord::Schema.define(version: 2020_12_08_074039) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "batters", force: :cascade do |t|
     t.string "number"
@@ -29,11 +32,12 @@ ActiveRecord::Schema.define(version: 2020_10_29_060313) do
     t.integer "error"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "url"
   end
 
   create_table "favorite_batters", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "batter_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "batter_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["batter_id"], name: "index_favorite_batters_on_batter_id"
@@ -41,8 +45,8 @@ ActiveRecord::Schema.define(version: 2020_10_29_060313) do
   end
 
   create_table "favorite_pitchers", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "pitcher_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "pitcher_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["pitcher_id"], name: "index_favorite_pitchers_on_pitcher_id"
@@ -66,6 +70,7 @@ ActiveRecord::Schema.define(version: 2020_10_29_060313) do
     t.float "walks_and_hits_per_innings_pitched"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "url"
   end
 
   create_table "users", force: :cascade do |t|
