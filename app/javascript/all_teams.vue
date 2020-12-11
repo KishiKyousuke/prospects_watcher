@@ -20,9 +20,12 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data: function () {
     return {
+      players: null,
       activeNamesCentral: ['1'],
       activeNamesPacific: ['1'],
       centralTeams: [
@@ -40,8 +43,11 @@ export default {
         "千葉ロッテマリーンズ",
         "北海道日本ハムファイターズ",
         "オリックス・バファローズ",
-      ],
+      ]
     }
+  },
+  mounted() {
+    axios.get('/api/v1/players').then(response => this.players = response.data)
   },
   methods: {
     handleChange(val) {
