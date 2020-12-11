@@ -7,6 +7,10 @@
 
 import Vue from 'vue'
 import AllTeams from './all_teams.vue'
+import ElemetUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
+Vue.use(ElemetUI)
 
 document.addEventListener('DOMContentLoaded', () => {
   const allTeams = document.getElementById('js-all-teams')
