@@ -7,12 +7,12 @@
 
 import Vue from 'vue'
 import AllTeams from './all_teams.vue'
-import ElemetUI from 'element-ui'
+import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.use(ElemetUI)
+Vue.use(ElementUI)
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('turbolinks:load', () => {
   const allTeams = document.getElementById('js-all-teams')
   if (allTeams) {
     new Vue({
