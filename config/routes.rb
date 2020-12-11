@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :pitchers, only: [:index] do
+  resources :pitchers, only: [] do
     resource :favorite_pitchers, only: [:create, :destroy]
   end
-  resources :batters, only: [:index] do
+  resources :batters, only: [] do
     resource :favorite_batters, only: [:create, :destroy]
   end
   resources :users, only: [:edit, :update] do
