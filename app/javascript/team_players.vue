@@ -8,12 +8,22 @@
         <el-table-column
             prop="number"
             label="背番号"
-            width="90">
+            width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="180">
+            width="170">
+        </el-table-column>
+        <el-table-column
+            width="80">
+          <el-button
+              type="success"
+              size="mini"
+              round
+              @click="open1">
+            登録
+          </el-button>
         </el-table-column>
       </el-table>
     </div>
@@ -25,12 +35,22 @@
         <el-table-column
             prop="number"
             label="背番号"
-            width="90">
+            width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="180">
+            width="170">
+        </el-table-column>
+        <el-table-column
+            width="80">
+          <el-button
+              type="success"
+              size="mini"
+              round
+              @click="open1">
+            登録
+          </el-button>
         </el-table-column>
       </el-table>
     </div>
@@ -50,6 +70,15 @@ export default {
   ,
   mounted() {
     axios.get('/api/v1/players').then(response => this.players = response.data)
+  },
+  methods: {
+    open1() {
+      this.$notify({
+        title: '登録完了',
+        message: '選手を登録しました',
+        type: 'success'
+      })
+    }
   }
 }
 </script>
