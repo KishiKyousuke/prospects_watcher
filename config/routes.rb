@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   namespace :api, { format: 'json' } do
     namespace :v1 do
       resources :players, only: [:index]
+      resources :favorite_pitchers, only: [:create, :destroy]
+      resources :favorite_batters, only: [:create, :destroy]
     end
   end
   resources :registered_players, only: :index
