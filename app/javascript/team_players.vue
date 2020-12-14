@@ -17,13 +17,9 @@
         </el-table-column>
         <el-table-column
             width="80">
-          <el-button
-              type="success"
-              size="mini"
-              round
-              @click="open1">
-            登録
-          </el-button>
+          <template slot-scope="scope">
+            <registerButton :selected-player="scope.row.id" :player-type="'batters'"></registerButton>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -44,13 +40,9 @@
         </el-table-column>
         <el-table-column
             width="80">
-          <el-button
-              type="success"
-              size="mini"
-              round
-              @click="open1">
-            登録
-          </el-button>
+          <template slot-scope="scope">
+            <registerButton :selected-player="scope.row.id" :player-type="'pitchers'"></registerButton>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -59,6 +51,7 @@
 
 <script>
 import axios from "axios"
+import RegisterButton from "./register_button"
 
 export default {
   data: function () {
@@ -68,17 +61,11 @@ export default {
   },
   props: ["selectedTeam"]
   ,
+  components: {
+    RegisterButton
+  },
   mounted() {
     axios.get('/api/v1/players').then(response => this.players = response.data)
-  },
-  methods: {
-    open1() {
-      this.$notify({
-        title: '登録完了',
-        message: '選手を登録しました',
-        type: 'success'
-      })
-    }
   }
 }
 </script>
