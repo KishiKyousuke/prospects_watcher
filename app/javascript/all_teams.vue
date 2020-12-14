@@ -48,12 +48,6 @@ export default {
   components: {
     TeamPlayers
   }
-  ,
-  methods: {
-    handleChange(val) {
-      console.log(val)
-    }
-  }
 }
 </script>
 
