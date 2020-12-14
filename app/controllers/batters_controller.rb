@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BattersController < ApplicationController
   before_action :authenticate_user!
 

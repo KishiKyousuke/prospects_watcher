@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FavoritePitchersController < ApplicationController
   before_action :set_pitcher
   before_action :authenticate_user!
