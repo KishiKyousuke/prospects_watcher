@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FavoriteBattersController < ApplicationController
   before_action :set_batter
   before_action :authenticate_user!

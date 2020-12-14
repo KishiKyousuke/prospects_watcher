@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'nokogiri'
 
@@ -24,7 +26,6 @@ class ScoreScraper
   end
 
   private
-
   def html
     @html = URI.open(@url) do |f|
       @charset = f.charset

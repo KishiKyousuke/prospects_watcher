@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 TEAMS = { '西武' => 7,
           'ソフトバンク' => 12,
           '楽天' => 376,
