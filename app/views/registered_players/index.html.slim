@@ -71,7 +71,7 @@ table
         td
           = batter.updated_at
         td
-          = link_to "登録解除", batter_favorite_batters_path(batter), method: :delete
+          = link_to "登録解除", api_v1_favorite_batter_path(favorite_batter, player_id: batter.id), method: :delete
 br
 h2
   | 投手
@@ -144,4 +144,4 @@ table
         td
           = pitcher.updated_at
         td
-          = link_to "登録解除", pitcher_favorite_pitchers_path(pitcher), method: :delete
+          = link_to "登録解除", api_v1_favorite_pitcher_path(favorite_pitcher, player_id: pitcher.id), method: :delete

@@ -3,13 +3,13 @@
     <h1>チーム別選手一覧</h1>
     <hr>
     <div class="container">
-      <el-collapse v-model="activeNamesCentral" @change="handleChange" class="central-teams-box">
+      <el-collapse v-model="activeNamesCentral" class="central-teams-box">
         <h2>セ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in centralTeams" :key="team" :title="formalName" :name="i">
           <teamPlayers :selected-team="team"></teamPlayers>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="activeNamesPacific" @change="handleChange" class="pacific-teams-box">
+      <el-collapse v-model="activeNamesPacific" class="pacific-teams-box">
         <h2>パ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in pacificTeams" :key="team" :title="formalName" :name="i">
           <teamPlayers :selected-team="team"></teamPlayers>
