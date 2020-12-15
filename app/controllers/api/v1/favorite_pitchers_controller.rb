@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::FavoritePitchersController < ActionController::API
   before_action :authenticate_user!
 
