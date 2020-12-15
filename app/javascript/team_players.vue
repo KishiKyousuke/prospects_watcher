@@ -18,7 +18,7 @@
         <el-table-column
             width="80">
           <template slot-scope="scope">
-            <registerButton :selected-player="scope.row.id" :player-type="'batters'"></registerButton>
+            <registerButton :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></registerButton>
           </template>
         </el-table-column>
       </el-table>
@@ -41,7 +41,7 @@
         <el-table-column
             width="80">
           <template slot-scope="scope">
-            <registerButton :selected-player="scope.row.id" :player-type="'pitchers'"></registerButton>
+            <registerButton :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></registerButton>
           </template>
         </el-table-column>
       </el-table>
@@ -50,22 +50,13 @@
 </template>
 
 <script>
-import axios from "axios"
 import RegisterButton from "./register_button"
 
 export default {
-  data: function () {
-    return {
-      players: []
-    }
-  },
-  props: ["selectedTeam"]
+  props: ["selectedTeam", "players", "registeredPlayers"]
   ,
   components: {
     RegisterButton
-  },
-  mounted() {
-    axios.get('/api/v1/players').then(response => this.players = response.data)
   }
 }
 </script>
