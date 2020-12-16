@@ -53,8 +53,20 @@
 import RegisterButton from "./register_button"
 
 export default {
-  props: ["selectedTeam", "players", "registeredPlayers"]
-  ,
+  props: {
+    selectedTeam: {
+      type: String,
+      require: true
+    },
+    players: {
+      type: Object,
+      require: true
+    },
+    registeredPlayers: {
+      type: Object,
+      require: true
+    }
+  },
   components: {
     RegisterButton
   }

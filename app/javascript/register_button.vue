@@ -21,7 +21,20 @@ export default {
       isRegistered: false
     }
   },
-  props: ["selectedPlayerId", "playerType", "registeredPlayers"],
+  props: {
+    selectedPlayerId: {
+      type: Number,
+      require: true
+    },
+    playerType: {
+      type: String,
+      require: true
+    },
+    registeredPlayers: {
+      type: Object,
+      require: true
+    }
+  },
   watch: {
     registeredPlayers(){
       this.changeRegisteredValue()
