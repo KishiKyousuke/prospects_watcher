@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import AllTeams from './all_teams.vue'
+import AllTeams from './AllTeams.vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 

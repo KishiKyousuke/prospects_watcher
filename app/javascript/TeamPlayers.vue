@@ -8,12 +8,18 @@
         <el-table-column
             prop="number"
             label="背番号"
-            width="90">
+            width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="180">
+            width="170">
+        </el-table-column>
+        <el-table-column
+            width="80">
+          <template slot-scope="scope">
+            <register-button :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -25,12 +31,18 @@
         <el-table-column
             prop="number"
             label="背番号"
-            width="90">
+            width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="180">
+            width="170">
+        </el-table-column>
+        <el-table-column
+            width="80">
+          <template slot-scope="scope">
+            <register-button :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></register-button>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -38,18 +50,25 @@
 </template>
 
 <script>
-import axios from "axios"
+import RegisterButton from "./RegisterButton"
 
 export default {
-  data: function () {
-    return {
-      players: []
+  props: {
+    selectedTeam: {
+      type: String,
+      require: true
+    },
+    players: {
+      type: Object,
+      require: true
+    },
+    registeredPlayers: {
+      type: Object,
+      require: true
     }
   },
-  props: ["selectedTeam"]
-  ,
-  mounted() {
-    axios.get('/api/v1/players').then(response => this.players = response.data)
+  components: {
+    RegisterButton
   }
 }
 </script>

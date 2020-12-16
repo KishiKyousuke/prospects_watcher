@@ -3,16 +3,16 @@
     <h1>チーム別選手一覧</h1>
     <hr>
     <div class="container">
-      <el-collapse v-model="activeNamesCentral" @change="handleChange" class="central-teams-box">
+      <el-collapse v-model="activeNamesCentral" class="central-teams-box">
         <h2>セ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in centralTeams" :key="team" :title="formalName" :name="i">
-          <teamPlayers :selected-team="team"></teamPlayers>
+          <team-players :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="activeNamesPacific" @change="handleChange" class="pacific-teams-box">
+      <el-collapse v-model="activeNamesPacific" class="pacific-teams-box">
         <h2>パ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in pacificTeams" :key="team" :title="formalName" :name="i">
-          <teamPlayers :selected-team="team"></teamPlayers>
+          <team-players :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import TeamPlayers from "./team_players"
+import TeamPlayers from "./TeamPlayers"
+import axios from 'axios'
 
 export default {
   data: function () {
@@ -42,11 +43,22 @@ export default {
         ロッテ: "千葉ロッテマリーンズ",
         日本ハム: "北海道日本ハムファイターズ",
         オリックス: "オリックス・バファローズ"
-      }
+      },
+      players: [],
+      registeredPlayers: null
     }
+  },
+  created() {
+    axios.get('/api/v1/players').then(response => this.players = response.data)
+    this.fetchRegisteredPlayers()
   },
   components: {
     TeamPlayers
+  },
+  methods: {
+    fetchRegisteredPlayers() {
+      axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+    }
   }
 }
 </script>
