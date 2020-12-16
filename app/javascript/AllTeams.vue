@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import TeamPlayers from "./team_players"
+import TeamPlayers from "./TeamPlayers"
 import axios from 'axios'
 
 export default {

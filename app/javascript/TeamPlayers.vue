@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import RegisterButton from "./register_button"
+import RegisterButton from "./RegisterButton"
 
 export default {
   props: {
