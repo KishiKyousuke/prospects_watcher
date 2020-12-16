@@ -18,7 +18,7 @@
         <el-table-column
             width="80">
           <template slot-scope="scope">
-            <registerButton :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></registerButton>
+            <register-button :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
           </template>
         </el-table-column>
       </el-table>
@@ -41,7 +41,7 @@
         <el-table-column
             width="80">
           <template slot-scope="scope">
-            <registerButton :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></registerButton>
+            <register-button :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></register-button>
           </template>
         </el-table-column>
       </el-table>
