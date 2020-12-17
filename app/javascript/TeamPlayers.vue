@@ -3,7 +3,7 @@
     <div class="batters-box">
       <h3>野手</h3>
       <el-table
-          :data="players[selectedTeam]['batters']"
+          :data="teamBatters[0]"
           style="width: 100%">
         <el-table-column
             prop="number"
@@ -26,7 +26,7 @@
     <div class="pitchers-box">
       <h3>投手</h3>
       <el-table
-          :data="players[selectedTeam]['pitchers']"
+          :data="teamPitchers[0]"
           style="width: 100%">
         <el-table-column
             prop="number"
@@ -53,18 +53,36 @@
 import RegisterButton from "./RegisterButton"
 
 export default {
+  data: function () {
+    return {
+      teamBatters: [],
+      teamPitchers: []
+    }
+  },
   props: {
     selectedTeam: {
       type: String,
       require: true
     },
     players: {
-      type: Object,
+      type: Array,
       require: true
     },
     registeredPlayers: {
       type: Object,
       require: true
+    }
+  },
+  mounted() {
+    this.divideTeamBatters()
+    this.divideTeamPitchers()
+  },
+  methods: {
+    divideTeamBatters() {
+      this.teamBatters.push(this.players.find(element => element.name === this.selectedTeam)['batters'])
+    },
+    divideTeamPitchers() {
+      this.teamPitchers.push(this.players.find(element => element.name === this.selectedTeam)['pitchers'])
     }
   },
   components: {

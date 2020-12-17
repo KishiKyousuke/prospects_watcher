@@ -6,13 +6,13 @@
       <el-collapse v-model="activeNamesCentral" class="central-teams-box">
         <h2>セ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in centralTeams" :key="team" :title="formalName" :name="i">
-          <team-players :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
+          <team-players v-if="isAllPlayersFetched && isRegisteredPlayersFetched" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
       <el-collapse v-model="activeNamesPacific" class="pacific-teams-box">
         <h2>パ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in pacificTeams" :key="team" :title="formalName" :name="i">
-          <team-players :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
+          <team-players v-if="isAllPlayersFetched && isRegisteredPlayersFetched" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -45,12 +45,22 @@ export default {
         オリックス: "オリックス・バファローズ"
       },
       players: [],
-      registeredPlayers: null
+      registeredPlayers: [],
+      isAllPlayersFetched: false,
+      isRegisteredPlayersFetched: false
     }
   },
   created() {
-    axios.get('/api/v1/players').then(response => this.players = response.data)
+    this.fetchAllPlayers()
     this.fetchRegisteredPlayers()
+  },
+  watch: {
+    players() {
+      this.isAllPlayersFetched = true
+    },
+    registeredPlayers() {
+      this.isRegisteredPlayersFetched = true
+    }
   },
   components: {
     TeamPlayers
@@ -58,6 +68,9 @@ export default {
   methods: {
     fetchRegisteredPlayers() {
       axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+    },
+    fetchAllPlayers() {
+      axios.get('/api/v1/players').then(response => this.players = response.data)
     }
   }
 }

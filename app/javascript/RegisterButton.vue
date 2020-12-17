@@ -35,11 +35,6 @@ export default {
       require: true
     }
   },
-  watch: {
-    registeredPlayers(){
-      this.changeRegisteredValue()
-    }
-  },
   mounted() {
     this.changeRegisteredValue()
   },
