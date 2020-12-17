@@ -1,29 +1,30 @@
 <template>
-  <div id="app" class="container">
-    <div class="batters-box">
+  <div id="app">
+    <div class="col s6">
       <h3>野手</h3>
       <el-table
           :data="teamBatters[0]"
-          style="width: 100%">
+          style="width: 100%"
+      >
         <el-table-column
             prop="number"
             label="背番号"
-            width="70">
+            min-width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="170">
+            min-width="170">
         </el-table-column>
         <el-table-column
-            width="80">
+            min-width="80">
           <template slot-scope="scope">
             <register-button :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="pitchers-box">
+    <div class="col s6">
       <h3>投手</h3>
       <el-table
           :data="teamPitchers[0]"
@@ -31,15 +32,15 @@
         <el-table-column
             prop="number"
             label="背番号"
-            width="70">
+            min-width="70">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            width="170">
+            min-width="170">
         </el-table-column>
         <el-table-column
-            width="80">
+            min-width="80">
           <template slot-scope="scope">
             <register-button :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></register-button>
           </template>
@@ -89,11 +90,4 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-}
-
-.batters-box, .pitchers-box {
-  width: 350px;
-}
 </style>
