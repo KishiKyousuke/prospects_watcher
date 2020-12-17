@@ -74,15 +74,12 @@ export default {
     }
   },
   mounted() {
-    this.divideTeamBatters()
-    this.divideTeamPitchers()
+    this.teamBatters.push(this.divideTeam('batters'))
+    this.teamPitchers.push(this.divideTeam('pitchers'))
   },
   methods: {
-    divideTeamBatters() {
-      this.teamBatters.push(this.players.find(element => element.name === this.selectedTeam)['batters'])
-    },
-    divideTeamPitchers() {
-      this.teamPitchers.push(this.players.find(element => element.name === this.selectedTeam)['pitchers'])
+    divideTeam(playersType) {
+      return this.players.find(element => element.name === this.selectedTeam)[`${playersType}`]
     }
   },
   components: {
