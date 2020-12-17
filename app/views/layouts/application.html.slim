@@ -9,15 +9,20 @@ html
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
   body
-    header
-      nav
-        - if user_signed_in?
-          = link_to 'ログアウト', destroy_user_session_path, method: :delete
-          |   |
-          = link_to '登録済の選手一覧', registered_players_path
-          |   |
-          = link_to '選手一覧', players_path
+    header.row
+      nav.col.s12.indigo.darken-4
+        div.nav-wrapper
+          a.brand-logo.center ProspectsWatcher
+          ul.left.hide-on-med-and-down#nav-mobile
+            - if user_signed_in?
+              li
+                = link_to 'ログアウト', destroy_user_session_path, method: :delete
+              li
+                = link_to '登録済の選手一覧', registered_players_path
+              li
+                = link_to '選手一覧', players_path
     .notifications
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
     = yield
+
