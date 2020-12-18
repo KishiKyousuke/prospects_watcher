@@ -6,13 +6,13 @@
       <el-collapse v-model="activeNamesCentral" class="central-teams-box">
         <h2>セ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in centralTeams" :key="team" :title="formalName" :name="i">
-          <team-players v-if="isAllPlayersFetched && isRegisteredPlayersFetched" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
+          <team-players v-if="showTeamPlayersComponent" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
       <el-collapse v-model="activeNamesPacific" class="pacific-teams-box">
         <h2>パ・リーグ</h2>
         <el-collapse-item v-for="(formalName, team, i) in pacificTeams" :key="team" :title="formalName" :name="i">
-          <team-players v-if="isAllPlayersFetched && isRegisteredPlayersFetched" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
+          <team-players v-if="showTeamPlayersComponent" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -46,31 +46,26 @@ export default {
       },
       players: [],
       registeredPlayers: [],
-      isAllPlayersFetched: false,
-      isRegisteredPlayersFetched: false
+      showTeamPlayersComponent: false
     }
   },
   created() {
-    this.fetchAllPlayers()
-    this.fetchRegisteredPlayers()
-  },
-  watch: {
-    players() {
-      this.isAllPlayersFetched = true
-    },
-    registeredPlayers() {
-      this.isRegisteredPlayersFetched = true
-    }
+    Promise.all([
+      this.fetchAllPlayers(),
+      this.fetchRegisteredPlayers()
+    ]).then(() => {
+      this.showTeamPlayersComponent = true
+    })
   },
   components: {
     TeamPlayers
   },
   methods: {
     fetchRegisteredPlayers() {
-      axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+      return axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
     },
     fetchAllPlayers() {
-      axios.get('/api/v1/players').then(response => this.players = response.data)
+      return axios.get('/api/v1/players').then(response => this.players = response.data)
     }
   }
 }
