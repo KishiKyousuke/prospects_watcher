@@ -11,7 +11,7 @@ html
   body
     header.row
       nav.col.s12.indigo.darken-4
-        div.nav-wrapper
+        .nav-wrapper
           a.brand-logo.center ProspectsWatcher
           ul.left.hide-on-med-and-down#nav-mobile
             - if user_signed_in?
@@ -25,4 +25,6 @@ html
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
     = yield
+    footer.page-footer.indigo.darken-4
+      .center 2020 CopyrightText
 
