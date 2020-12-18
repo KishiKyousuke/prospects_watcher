@@ -90,4 +90,14 @@ export default {
 </script>
 
 <style scoped>
+
+</style>
+
+<style lang="scss" scoped>
+/deep/ .el-table th>.cell {
+  font-size: 16px;
+}
+/deep/ .el-table td>.cell {
+  font-size: 18px;
+}
 </style>
