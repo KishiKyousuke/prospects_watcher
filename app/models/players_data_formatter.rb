@@ -7,14 +7,15 @@ class PlayersDataFormatter
   def initialize(batters, pitchers)
     @batters = batters
     @pitchers = pitchers
-    @all_data = {}
+    @all_data = []
   end
 
   def run
     AFFILIATION_TEAMS.each do |team|
       affiliation_batters = divide_players_into_teams(@batters, team)
       affiliation_pitchers = divide_players_into_teams(@pitchers, team)
-      @all_data[team] = {
+      @all_data << {
+        name: team,
         batters: sort_by_number(affiliation_batters),
         pitchers: sort_by_number(affiliation_pitchers)
       }
