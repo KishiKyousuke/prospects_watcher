@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="col s6">
-      <h3>野手</h3>
+      <h5>野手</h5>
       <el-table
           :data="teamBatters[0]"
           style="width: 100%"
@@ -25,7 +25,7 @@
       </el-table>
     </div>
     <div class="col s6">
-      <h3>投手</h3>
+      <h5>投手</h5>
       <el-table
           :data="teamPitchers[0]"
           style="width: 100%">
