@@ -1,5 +1,5 @@
-.container
-  .container(style="margin: 120px auto;")
+.container.row
+  .col.s12.l8(style="margin: 120px auto; float: none;")
     h5
       | 新規登録
     = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|

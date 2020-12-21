@@ -1,5 +1,5 @@
-.container
-  .container(style="margin: 160px auto;")
+.container.row
+  .col.s12.l8(style="margin: 160px auto; float: none;")
     h5
       |  ログイン
     = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
