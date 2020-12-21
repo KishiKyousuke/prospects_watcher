@@ -79,8 +79,8 @@ export default {
 
 <style lang="scss" scoped>
 /deep/ .el-collapse-item__header{
-  font-size: 25px;
+  font-size: 2rem;
   line-height: 40px;
-  height: 70px;
+  height: 72px;
 }
 </style>

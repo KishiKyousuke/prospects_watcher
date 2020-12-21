@@ -9,12 +9,12 @@
         <el-table-column
             prop="number"
             label="背番号"
-            min-width="70">
+            min-width="72">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            min-width="170">
+            min-width="168">
         </el-table-column>
         <el-table-column
             min-width="80">
@@ -32,12 +32,12 @@
         <el-table-column
             prop="number"
             label="背番号"
-            min-width="70">
+            min-width="72">
         </el-table-column>
         <el-table-column
             prop="name"
             label="名前"
-            min-width="170">
+            min-width="168">
         </el-table-column>
         <el-table-column
             min-width="80">
@@ -95,9 +95,9 @@ export default {
 
 <style lang="scss" scoped>
 /deep/ .el-table th>.cell {
-  font-size: 16px;
+  font-size: 1rem;
 }
 /deep/ .el-table td>.cell {
-  font-size: 18px;
+  font-size: 1.3rem;
 }
 </style>
