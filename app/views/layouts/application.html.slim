@@ -8,23 +8,31 @@ html
     = csp_meta_tag
     = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
-  body
-    header.row
-      nav.col.s12.indigo.darken-4
+  body(style="display: flex; flex-direction: column; min-height: 100vh;")
+    header
+      nav.indigo.darken-4
         .nav-wrapper
           a.brand-logo.center ProspectsWatcher
           ul.left.hide-on-med-and-down#nav-mobile
             - if user_signed_in?
               li
-                = link_to 'ログアウト', destroy_user_session_path, method: :delete
-              li
                 = link_to '登録済の選手一覧', registered_players_path
               li
                 = link_to '選手一覧', players_path
+              li
+                = link_to 'ユーザー情報編集', edit_user_registration_path
+              li
+                = link_to 'ログアウト', destroy_user_session_path, method: :delete
+            - else
+              - if controller_name != 'sessions'
+                = link_to "ログイン", new_session_path(resource_name)
+              - if devise_mapping.registerable? && controller_name != 'registrations'
+                = link_to "新規登録", new_registration_path(resource_name)
     .notifications
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
-    = yield
+    .main(style="flex: 1 0 auto;")
+      = yield
     footer.page-footer.indigo.darken-4
       .center 2020 CopyrightText
 
