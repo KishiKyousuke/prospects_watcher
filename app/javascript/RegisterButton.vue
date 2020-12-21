@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { csrfToken } from 'rails-ujs'
+import { csrfToken } from '@rails/ujs'
 import axios from 'axios'
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken()
