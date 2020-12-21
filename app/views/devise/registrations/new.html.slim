@@ -10,11 +10,7 @@
         = f.email_field :email, autofocus: true, autocomplete: "email"
       .field
         = f.label :password
-        - if @minimum_password_length
-          em
-            | (
-            = @minimum_password_length
-            |  文字以上)
+        em(style="font-size: 0.9em; color: #9e9e9e")  半角英数6文字以上
         br
         = f.password_field :password, autocomplete: "new-password"
       .field

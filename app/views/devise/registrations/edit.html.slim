@@ -14,23 +14,16 @@
           = resource.unconfirmed_email
       .field
         = f.label :password
-        i
-          | (変更しない場合は空白)
+        em(style="font-size: 0.9em; color: #9e9e9e")  半角英数6文字以上(変更しない場合は空白)
         br
         = f.password_field :password, autocomplete: "new-password"
-        - if @minimum_password_length
-          br
-          em
-            = @minimum_password_length
-            |  文字以上
       .field
         = f.label :password_confirmation
         br
         = f.password_field :password_confirmation, autocomplete: "new-password"
       .field
         = f.label :current_password
-        i
-          | (変更を反映する場合は現在のパスワードが必要です)
+        em(style="font-size: 0.9em; color: #9e9e9e")  変更を反映する場合は現在のパスワードが必要です
         br
         = f.password_field :current_password, autocomplete: "current-password", style: "margin-bottom: 24px;"
       .actions
