@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <el-button type="danger" size="mini" round @click="releaseProcessing" v-if="isRegistered">
+    <el-button type="danger" size="small" round @click="releaseProcessing" v-if="isRegistered">
       解除
     </el-button>
-    <el-button type="success" size="mini" round @click="registerProcessing" v-else>
+    <el-button type="success" size="small" round @click="registerProcessing" v-else>
       登録
     </el-button>
   </div>

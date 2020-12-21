@@ -1,16 +1,19 @@
 <template>
-  <div id="app">
-    <h1>チーム別選手一覧</h1>
-    <hr>
-    <div class="container">
-      <el-collapse v-model="activeNamesCentral" class="central-teams-box">
-        <h2>セ・リーグ</h2>
+  <div id="app" class="row">
+    <div class="col s12">
+      <h4>チーム別選手一覧</h4>
+    </div>
+    <div class="col l6 s12">
+      <h5 style="font-weight: bold">セ・リーグ</h5>
+      <el-collapse v-model="activeNamesCentral">
         <el-collapse-item v-for="(formalName, team, i) in centralTeams" :key="team" :title="formalName" :name="i">
           <team-players v-if="showTeamPlayersComponent" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
       </el-collapse>
-      <el-collapse v-model="activeNamesPacific" class="pacific-teams-box">
-        <h2>パ・リーグ</h2>
+    </div>
+    <div class="col l6 s12">
+      <h5 style="font-weight: bold">パ・リーグ</h5>
+      <el-collapse v-model="activeNamesPacific">
         <el-collapse-item v-for="(formalName, team, i) in pacificTeams" :key="team" :title="formalName" :name="i">
           <team-players v-if="showTeamPlayersComponent" :selected-team="team" :players="players" :registered-players="registeredPlayers"></team-players>
         </el-collapse-item>
@@ -72,20 +75,12 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-}
-
-.central-teams-box, .pacific-teams-box {
-  width: 700px;
-  margin: 0 5px;
-}
 </style>
 
 <style lang="scss" scoped>
 /deep/ .el-collapse-item__header{
-  font-size: 17px;
-  font-weight: bold;
+  font-size: 2rem;
+  line-height: 40px;
+  height: 72px;
 }
 </style>
