@@ -8,7 +8,7 @@ class PlayersDataFormatter
   end
 
   def run
-    all_data = {central: [], pacific: []}
+    all_data = { central: [], pacific: [] }
     @teams.each do |team|
       batters = team.batters.select(:id, :number, :name)
       pitchers = team.pitchers.select(:id, :number, :name)

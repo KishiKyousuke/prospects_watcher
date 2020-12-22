@@ -40,7 +40,7 @@ export default {
   created() {
     Promise.all([
       this.fetchAllPlayers(),
-      this.fetchRegisteredPlayers(),
+      this.fetchRegisteredPlayers()
     ]).then(() => {
       this.showTeamPlayersComponent = true
     })
