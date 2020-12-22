@@ -1,0 +1,42 @@
+ja:
+  activerecord:
+    models:
+      batter: 野手
+      pitcher: 投手
+    attributes:
+      batter:
+        number: 背番号
+        name: 選手名
+        team: 所属チーム
+        batting_average: 打率
+        home_run: HR
+        runs_batted_in: 打点
+        stolen_base: 盗塁
+        on_base_percentage: 出塁率
+        on_base_plus_slugging: OPS
+        walks: 四球
+        hit_by_pitch: 死球
+        scoring_position_batting_average: 得点圏打率
+        strikeout: 三振
+        error: 失策
+      pitcher:
+        number: 背番号
+        name: 選手名
+        team: 所属チーム
+        earned_run_average: 防御率
+        win: 勝
+        lose: 負
+        strikeout: 奪三振
+        innings_pitched: 投球回
+        pitched: 登板
+        number_of_save: セーブ
+        hold_point: HP
+        strikeouts_per_nine_innings: 奪三振率
+        strikeout_to_walk_ratio: K/BB
+        walks_and_hits_per_innings_pitched: WHIP
+  players:
+    index:
+      link: 選手一覧
+  registered_players:
+    index:
+      link: 登録選手一覧

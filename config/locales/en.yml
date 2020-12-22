@@ -1,33 +1,42 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# To learn more, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
-
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      batter: batter
+      pitcher: pitcher
+    attributes:
+      batter:
+        number: number
+        name: player name
+        team: team
+        batting_average: AVG
+        home_run: HR
+        runs_batted_in: RBI
+        stolen_base: SB
+        on_base_percentage: OBP
+        on_base_plus_slugging: OPS
+        walks: BB
+        hit_by_pitch: HBP
+        scoring_position_batting_average: RISP
+        strikeout: SO
+        error: E
+      pitcher:
+        number: number
+        name: player name
+        team: team
+        earned_run_average: ERA
+        win: W
+        lose: L
+        strikeout: SO
+        innings_pitched: IP
+        pitched: G
+        number_of_save: SV
+        hold_point: HP
+        strikeouts_per_nine_innings: K/9
+        strikeout_to_walk_ratio: K/BB
+        walks_and_hits_per_innings_pitched: WHIP
+    players:
+      index:
+        link: All players
+    registered_players:
+      index:
+        link: Registered players
