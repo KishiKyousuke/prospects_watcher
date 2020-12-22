@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class PitcherScore
-  def initialize(scores, team)
+  def initialize(scores, team_id)
     @number = scores[0]
     @url = scores[1]
     @name = scores[2]
-    @team = team
+    @team_id = team_id
     @earned_run_average = scores[3]
     @win = scores[9]
     @lose = scores[10]
@@ -24,7 +24,7 @@ class PitcherScore
     pitcher.update(number: @number,
                    url: @url,
                    name: @name,
-                   team: @team,
+                   team_id: @team_id,
                    earned_run_average: @earned_run_average,
                    win: @win,
                    lose: @lose,
