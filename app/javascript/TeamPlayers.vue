@@ -65,7 +65,7 @@ export default {
       type: String,
       require: true
     },
-    players: {
+    sameLeagueTeams: {
       type: Array,
       require: true
     },
@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     divideTeam(playersType) {
-      return this.players.find(element => element.name === this.selectedTeam)[`${playersType}`]
+      return this.sameLeagueTeams.find(element => element.name === this.selectedTeam)[`${playersType}`]
     }
   },
   components: {

@@ -10,10 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_08_074039) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+ActiveRecord::Schema.define(version: 2020_12_22_012845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +18,6 @@ ActiveRecord::Schema.define(version: 2020_12_08_074039) do
   create_table "batters", force: :cascade do |t|
     t.string "number"
     t.string "name"
-    t.string "team"
     t.string "batting_average"
     t.integer "home_run"
     t.integer "runs_batted_in"
@@ -36,6 +32,8 @@ ActiveRecord::Schema.define(version: 2020_12_08_074039) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "url"
+    t.bigint "team_id"
+    t.index ["team_id"], name: "index_batters_on_team_id"
   end
 
   create_table "favorite_batters", force: :cascade do |t|
@@ -59,7 +57,6 @@ ActiveRecord::Schema.define(version: 2020_12_08_074039) do
   create_table "pitchers", force: :cascade do |t|
     t.string "number"
     t.string "name"
-    t.string "team"
     t.float "earned_run_average"
     t.integer "win"
     t.integer "lose"
@@ -74,6 +71,18 @@ ActiveRecord::Schema.define(version: 2020_12_08_074039) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "url"
+    t.bigint "team_id"
+    t.index ["team_id"], name: "index_pitchers_on_team_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "formal_name", null: false
+    t.integer "ranking", null: false
+    t.integer "league", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "url_id", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -88,8 +97,10 @@ ActiveRecord::Schema.define(version: 2020_12_08_074039) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "batters", "teams"
   add_foreign_key "favorite_batters", "batters"
   add_foreign_key "favorite_batters", "users"
   add_foreign_key "favorite_pitchers", "pitchers"
   add_foreign_key "favorite_pitchers", "users"
+  add_foreign_key "pitchers", "teams"
 end
