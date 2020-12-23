@@ -16,18 +16,18 @@ html
           ul.left.hide-on-med-and-down#nav-mobile
             - if user_signed_in?
               li
-                = link_to '登録済の選手一覧', registered_players_path
+                = link_to t('registered_players.index.link'), registered_players_path
               li
-                = link_to '選手一覧', players_path
+                = link_to t('players.index.link'), players_path
               li
-                = link_to 'ユーザー情報編集', edit_user_registration_path
+                = link_to t('devise.registrations.edit.link'), edit_user_registration_path
               li
-                = link_to 'ログアウト', destroy_user_session_path, method: :delete
+                = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
             - else
               - if controller_name != 'sessions'
-                = link_to "ログイン", new_session_path(resource_name)
+                = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
               - if devise_mapping.registerable? && controller_name != 'registrations'
-                = link_to "新規登録", new_registration_path(resource_name)
+                = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
     .notifications
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
