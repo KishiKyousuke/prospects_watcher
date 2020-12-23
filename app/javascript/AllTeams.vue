@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="row">
+  <div id="app" class="row" v-loading="loading">
     <div class="col s12">
       <h4>チーム別選手一覧</h4>
     </div>
@@ -34,7 +34,7 @@ export default {
       teams: {},
       registeredPlayers: [],
       showTeamPlayersComponent: false,
-      nowLoading: true
+      loading: true
     }
   },
   created() {
@@ -42,6 +42,7 @@ export default {
       this.fetchAllPlayers(),
       this.fetchRegisteredPlayers()
     ]).then(() => {
+      this.loading = false
       this.showTeamPlayersComponent = true
     })
   },
