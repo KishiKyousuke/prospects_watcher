@@ -1,7 +1,6 @@
 .container.row
   .col.s12.l8(style="margin: 160px auto; float: none;")
-    h5
-      |  ログイン
+    h5 = t('devise.sessions.new.sign_in')
     = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
       .field
         = f.label :email
@@ -12,5 +11,5 @@
         br
         = f.password_field :password, autocomplete: "current-password", style: "margin-bottom: 24px;"
       .actions
-        = f.submit "ログイン", class: "btn-large waves-effect waves-light indigo darken-1 white-text", style: "margin-bottom: 24px;"
+        = f.submit t('devise.sessions.new.sign_in'), class: "btn-large waves-effect waves-light indigo darken-1 white-text", style: "margin-bottom: 24px;"
     = render "devise/shared/links"
