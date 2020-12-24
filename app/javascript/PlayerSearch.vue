@@ -57,11 +57,12 @@ export default {
     disassembleTeams(league) {
       const teams = this.teams[`${league}`]
       for (let dividedTeam of teams) {
-        const batters = dividedTeam['batters'].map(batter => ({...batter, playerType: "batters"}))
-        this.players.push(batters)
-        const pitchers = dividedTeam['pitchers'].map(pitcher => ({...pitcher, playerType: "pitchers"}))
-        this.players.push(pitchers)
+        this.players.push(this.addPlayerTypeProperty(dividedTeam['batters'], 'batters'))
+        this.players.push(this.addPlayerTypeProperty(dividedTeam['pitchers'], 'pitchers'))
       }
+    },
+    addPlayerTypeProperty(players, playerType) {
+      return players.map(player => ({...player, playerType: `${playerType}`}))
     },
     registerProcessing(){
       this.registerPlayer().then(() => {
