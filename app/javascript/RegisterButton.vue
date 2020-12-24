@@ -40,12 +40,16 @@ export default {
   },
   methods: {
     registerProcessing(){
-      this.registerPlayer()
-      this.isRegistered = true
-      this.successNotice()
+      this.registerPlayer().then(() => {
+        this.successNotice()
+      }).catch(() => {
+        this.duplicateErrorNotice()
+      }).finally(() => {
+        this.isRegistered = true
+      })
     },
     registerPlayer: async function() {
-      await axios.post(`/api/v1/favorite_${this.playerType}`, {player_id: this.selectedPlayerId})
+      return await axios.post(`/api/v1/favorite_${this.playerType}`, {player_id: this.selectedPlayerId})
     },
     successNotice() {
       this.$notify({
@@ -54,15 +58,22 @@ export default {
         type: 'success'
       })
     },
+    duplicateErrorNotice() {
+      this.$notify({
+        title: '登録エラー',
+        message: 'この選手は既に登録されています',
+        type: 'error'
+      })
+    },
     releaseProcessing() {
       this.releasePlayer()
       this.isRegistered = false
-      this.deleteNotice()
+      this.releaseNotice()
     },
     releasePlayer: async function() {
       await axios.delete(`/api/v1/favorite_${this.playerType}`, {data: {player_id: this.selectedPlayerId}})
     },
-    deleteNotice() {
+    releaseNotice() {
       this.$notify({
         title: '登録解除',
         message: '選手を登録から解除しました',
