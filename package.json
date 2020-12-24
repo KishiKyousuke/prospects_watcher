@@ -12,6 +12,7 @@
     "turbolinks": "^5.2.0",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.5",
+    "vue-simple-suggest": "^1.10.3",
     "vue-template-compiler": "^2.6.12"
   },
   "version": "0.1.0",

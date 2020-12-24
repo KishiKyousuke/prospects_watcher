@@ -5,4 +5,5 @@ require("channels")
 
 import '../css/application.css'
 
-import '../all_teams.js'
+import '../all_teams'
+import '../player_search'
