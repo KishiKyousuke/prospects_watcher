@@ -1,10 +1,10 @@
 <template>
   <div class="row">
-    <div class="col s12">
+    <div class="col s12" id="search-field-title">
       <h4>選手名検索</h4>
       <hr>
     </div>
-    <div class="col s12 center" style="margin: auto; float: none;">
+    <div class="col s6 center m-auto float-none">
       <vue-simple-suggest
         v-model="selected"
         :list="players"
@@ -12,12 +12,13 @@
         value-attribute="id"
         mode="select"
         :filter-by-query="true"
-        style="display: inline-block; width: 400px; margin: 40px 0;">
+        :styles="autoCompleteStyles"
+        class="col s8">
         <template slot="suggestion-item" slot-scope="{ suggestion }">
           <span>{{ suggestion.name }}</span>
         </template>
       </vue-simple-suggest>
-      <el-button type="success" @click="registerProcessing" round style="display: inline-block; margin-left: 16px;">登録</el-button>
+      <el-button type="success" @click="registerProcessing" round class="col s2">登録</el-button>
     </div>
   </div>
 </template>
@@ -31,7 +32,10 @@ export default {
     return {
       teams: [],
       players: [],
-      selected: {}
+      selected: {},
+      autoCompleteStyles: {
+        suggestItem: "left-align"
+      }
     }
   },
   components: {
@@ -89,5 +93,16 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.m-auto {
+  margin: auto;
+}
+
+.float-none {
+  float: none;
+}
+
+#search-field-title{
+  margin-bottom: 40px;
+}
 </style>
