@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PlayersDataFormatter
-  attr_reader :all_data
-
   def initialize(teams, batters, pitchers)
     @teams = teams
     @batters = batters
@@ -10,18 +8,16 @@ class PlayersDataFormatter
   end
 
   def run
-    all_data = { central: [], pacific: [] }
-    @teams.each do |team|
+    @teams.each_with_object({ central: [], pacific: [] }) do |team, hash|
       team_batters = divide_by_team(@batters, team)
       team_pitchers = divide_by_team(@pitchers, team)
-      all_data[team.league.to_sym] << {
+      hash[team.league.to_sym] << {
         name: team.name,
         formal_name: team.formal_name,
         batters: sort_by_number(team_batters),
         pitchers: sort_by_number(team_pitchers)
       }
     end
-    all_data
   end
 
   private
