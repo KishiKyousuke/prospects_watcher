@@ -7,6 +7,8 @@ class BatterScore
     @name = scores[2]
     @team_id = team_id
     @batting_average = scores[3]
+    @at_bat = scores[6]
+    @hits = scores[7]
     @home_run = scores[10]
     @runs_batted_in = scores[12]
     @stolen_base = scores[19]
@@ -26,6 +28,8 @@ class BatterScore
                   name: @name,
                   team_id: @team_id,
                   batting_average: @batting_average,
+                  at_bat: @at_bat,
+                  hits: @hits,
                   home_run: @home_run,
                   runs_batted_in: @runs_batted_in,
                   stolen_base: @stolen_base,
