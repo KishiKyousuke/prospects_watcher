@@ -8,8 +8,17 @@
         enabled: true,
         selectionText: '選手を選択中',
         clearSelectionText: 'キャンセル',
+        selectOnCheckboxOnly: true
       }"
     >
+      <template slot="table-row" slot-scope="props">
+        <span v-if="props.column.field === 'name'">
+          <a :href="playerUrl(props.row.url)" target="_blank" rel="noopener noreferrer">{{props.row.name}}</a>
+        </span>
+        <span v-else>
+          {{props.formattedRow[props.column.field]}}
+        </span>
+      </template>
       <div slot="selected-row-actions">
         <el-button type="danger" size="small" round @click="releaseProcessing">解除する</el-button>
       </div>
@@ -136,6 +145,9 @@ export default {
         message: '選手を登録から解除しました',
         type: 'warning'
       })
+    },
+    playerUrl(url) {
+      return 'https://baseball.yahoo.co.jp' + url
     }
   }
 }
