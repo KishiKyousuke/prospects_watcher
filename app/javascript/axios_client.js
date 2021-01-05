@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import { csrfToken } from 'rails-ujs'
+import { csrfToken } from '@rails/ujs'
 
 const axiosClient = Axios.create({})
 
