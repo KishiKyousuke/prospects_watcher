@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import TeamPlayers from "./TeamPlayers"
-import axios from 'axios'
+import TeamPlayers from './TeamPlayers'
+import {axiosClient} from './axios_client'
 
 export default {
   data: function () {
@@ -51,10 +51,10 @@ export default {
   },
   methods: {
     fetchRegisteredPlayers() {
-      return axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+      return axiosClient.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
     },
     fetchAllPlayers() {
-      return axios.get('/api/v1/players').then(response => this.teams = response.data)
+      return axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
     }
   }
 }

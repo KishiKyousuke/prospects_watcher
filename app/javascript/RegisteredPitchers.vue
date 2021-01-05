@@ -27,10 +27,7 @@
 </template>
 
 <script>
-import { csrfToken } from '@rails/ujs'
-import axios from 'axios'
-
-axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken()
+import {axiosClient} from './axios_client'
 
 export default {
   props: {
@@ -134,7 +131,7 @@ export default {
     },
     releasePitchers() {
       for (const player of this.checkedPlayers) {
-        axios.delete(`/api/v1/favorite_pitchers`, {data: {player_id: player['pitcher_id']}})
+        axiosClient.delete(`/api/v1/favorite_pitchers`, {data: {player_id: player['pitcher_id']}})
         const index = this.pitchers.findIndex(pitcher => pitcher['pitcher_id'] === player['pitcher_id'])
         this.pitchers.splice(index, 1)
       }

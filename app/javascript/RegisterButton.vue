@@ -10,10 +10,7 @@
 </template>
 
 <script>
-import { csrfToken } from '@rails/ujs'
-import axios from 'axios'
-
-axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken()
+import {axiosClient} from './axios_client'
 
 export default {
   data: function () {
@@ -49,7 +46,7 @@ export default {
       })
     },
     registerPlayer: async function() {
-      return await axios.post(`/api/v1/favorite_${this.playerType}`, {player_id: this.selectedPlayerId})
+      return await axiosClient.post(`/api/v1/favorite_${this.playerType}`, {player_id: this.selectedPlayerId})
     },
     successNotice() {
       this.$notify({
@@ -71,7 +68,7 @@ export default {
       this.releaseNotice()
     },
     releasePlayer: async function() {
-      await axios.delete(`/api/v1/favorite_${this.playerType}`, {data: {player_id: this.selectedPlayerId}})
+      await axiosClient.delete(`/api/v1/favorite_${this.playerType}`, {data: {player_id: this.selectedPlayerId}})
     },
     releaseNotice() {
       this.$notify({
@@ -83,11 +80,11 @@ export default {
     changeRegisteredValue() {
       switch (this.playerType) {
         case 'batters':
-          const registeredBattersId = this.registeredPlayers["batters"].map(player => player["batter_id"])
+          const registeredBattersId = this.registeredPlayers['batters'].map(player => player['batter_id'])
           this.isRegistered = registeredBattersId.includes(this.selectedPlayerId)
           break
         case 'pitchers':
-          let registeredPitchersId = this.registeredPlayers["pitchers"].map(player => player["pitcher_id"])
+          let registeredPitchersId = this.registeredPlayers['pitchers'].map(player => player['pitcher_id'])
           this.isRegistered = registeredPitchersId.includes(this.selectedPlayerId)
           break
       }

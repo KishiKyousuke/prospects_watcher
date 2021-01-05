@@ -14,7 +14,7 @@
 <script>
 import RegisteredBatters from './RegisteredBatters'
 import RegisteredPitchers from './RegisteredPitchers'
-import axios from 'axios'
+import {axiosClient} from './axios_client'
 
 export default {
   data: function () {
@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     fetchRegisteredPlayers() {
-      axios.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+      axiosClient.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
     }
   }
 }
