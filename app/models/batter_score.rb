@@ -7,6 +7,7 @@ class BatterScore
     @name = scores[2]
     @team_id = team_id
     @batting_average = scores[3]
+    @plate_appearance = scores[5]
     @at_bat = scores[6]
     @hits = scores[7]
     @home_run = scores[10]
@@ -23,11 +24,12 @@ class BatterScore
 
   def reflect_in_db
     batter = Batter.find_or_initialize_by(url: @url)
-    batter.update(number: @number,
+    batter.update!(number: @number,
                   url: @url,
                   name: @name,
                   team_id: @team_id,
                   batting_average: @batting_average,
+                  plate_appearance: @plate_appearance,
                   at_bat: @at_bat,
                   hits: @hits,
                   home_run: @home_run,

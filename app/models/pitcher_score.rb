@@ -21,7 +21,7 @@ class PitcherScore
 
   def reflect_in_db
     pitcher = Pitcher.find_or_initialize_by(url: @url)
-    pitcher.update(number: @number,
+    pitcher.update!(number: @number,
                    url: @url,
                    name: @name,
                    team_id: @team_id,
