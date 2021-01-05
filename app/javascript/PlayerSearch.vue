@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {axiosClient} from './axios_client'
 import VueSimpleSuggest from 'vue-simple-suggest'
 
 export default {
@@ -34,7 +34,7 @@ export default {
       players: [],
       selected: {},
       autoCompleteStyles: {
-        suggestItem: "left-align"
+        suggestItem: 'left-align'
       }
     }
   },
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     fetchAllTeams() {
-      return axios.get('/api/v1/players').then(response => this.teams = response.data)
+      return axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
     },
     disassembleTeams(league) {
       const teams = this.teams[`${league}`]
@@ -74,7 +74,7 @@ export default {
       })
     },
     registerPlayer: async function() {
-      return await axios.post(`/api/v1/favorite_${this.selected['playerType']}`, {player_id: this.selected['id']})
+      return await axiosClient.post(`/api/v1/favorite_${this.selected['playerType']}`, {player_id: this.selected['id']})
     },
     successNotice() {
       this.$notify({

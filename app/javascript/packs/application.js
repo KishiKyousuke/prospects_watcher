@@ -7,3 +7,4 @@ import '../css/application.css'
 
 import '../all_teams'
 import '../player_search'
+import '../registered_players'

@@ -7,4 +7,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   has_many :favorite_pitchers, dependent: :destroy
   has_many :favorite_batters, dependent: :destroy
+  has_many :pitchers, through: :favorite_pitchers
+  has_many :batters, through: :favorite_batters
 end
