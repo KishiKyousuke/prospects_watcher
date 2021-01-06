@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'nokogiri'
+require 'retryable'
 
 class ScoreScraper
   def initialize(url)
@@ -27,9 +28,11 @@ class ScoreScraper
 
   private
   def html
-    @html = URI.open(@url) do |f|
-      @charset = f.charset
-      f.read
+    Retryable.retryable(tries: 3, on: OpenURI::HTTPError, sleep: 3) do
+      @html = URI.open(@url) do |f|
+        @charset = f.charset
+        f.read
+      end
     end
   end
 end
