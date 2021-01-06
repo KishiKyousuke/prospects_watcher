@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 namespace :scrape do
+  desc '選手成績を取得'
+  task player_record: :environment do
+    Rake::Task['scrape:batter_record'].invoke
+    Rake::Task['scrape:pitcher_record'].invoke
+    ScrapingLog.create!
+  end
+
   desc 'Yahooスポーツから野手の成績を取得'
   task batter_record: :environment do
     Team.all.each do |team|
