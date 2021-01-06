@@ -1,0 +1,2 @@
+class ScrapingLog < ApplicationRecord
+end
