@@ -1,9 +1,17 @@
 <template>
   <div id="app">
     <vue-good-table
+      v-if="pitchers && pitchers.length"
       @on-selected-rows-change="selectionChanged"
       :columns="columns"
       :rows="pitchers"
+      :sort-options="{
+        enabled: true,
+        initialSortBy: [
+            {field: 'sort_flag', type: 'desc'},
+            {field: 'innings_pitched', type: 'desc'}
+        ]
+      }"
       :select-options="{
         enabled: true,
         selectionText: '選手を選択中',
@@ -43,7 +51,8 @@ export default {
         {
           label: '背番号',
           field: 'number',
-          type: 'number'
+          type: 'number',
+          sortable: false
         },
         {
           label: '選手名',
@@ -117,6 +126,11 @@ export default {
           label: 'WHIP',
           field: 'walks_and_hits_per_innings_pitched',
           type: 'number'
+        },
+        {
+          field: 'sort_flag',
+          type: 'number',
+          hidden: true
         }
       ]
     }

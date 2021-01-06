@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_25_003601) do
+ActiveRecord::Schema.define(version: 2021_01_05_070138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,22 +19,23 @@ ActiveRecord::Schema.define(version: 2020_12_25_003601) do
     t.string "number"
     t.string "name"
     t.string "batting_average"
-    t.integer "home_run"
-    t.integer "runs_batted_in"
-    t.integer "stolen_base"
+    t.string "home_run"
+    t.string "runs_batted_in"
+    t.string "stolen_base"
     t.string "on_base_percentage"
     t.string "on_base_plus_slugging"
-    t.integer "walks"
-    t.integer "hit_by_pitch"
+    t.string "walks"
+    t.string "hit_by_pitch"
     t.string "scoring_position_batting_average"
-    t.integer "strikeout"
-    t.integer "error"
+    t.string "strikeout"
+    t.string "error"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "url"
     t.bigint "team_id"
-    t.integer "at_bat"
-    t.integer "hits"
+    t.string "at_bat"
+    t.string "hits"
+    t.string "plate_appearance"
     t.index ["team_id"], name: "index_batters_on_team_id"
   end
 
@@ -61,17 +62,17 @@ ActiveRecord::Schema.define(version: 2020_12_25_003601) do
   create_table "pitchers", force: :cascade do |t|
     t.string "number"
     t.string "name"
-    t.float "earned_run_average"
-    t.integer "win"
-    t.integer "lose"
-    t.integer "strikeout"
+    t.string "earned_run_average"
+    t.string "win"
+    t.string "lose"
+    t.string "strikeout"
     t.string "innings_pitched"
-    t.integer "pitched"
-    t.integer "number_of_save"
-    t.integer "hold_point"
-    t.float "strikeouts_per_nine_innings"
-    t.float "strikeout_to_walk_ratio"
-    t.float "walks_and_hits_per_innings_pitched"
+    t.string "pitched"
+    t.string "number_of_save"
+    t.string "hold_point"
+    t.string "strikeouts_per_nine_innings"
+    t.string "strikeout_to_walk_ratio"
+    t.string "walks_and_hits_per_innings_pitched"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "url"
