@@ -1,25 +1,27 @@
 <template>
-  <div class="row">
-    <div class="col s12" id="search-field-title">
-      <h4>選手名検索</h4>
-      <hr>
-    </div>
-    <div class="col s6 center m-auto float-none">
-      <vue-simple-suggest
-        v-model="selected"
-        :list="players"
-        display-attribute="name"
-        value-attribute="id"
-        mode="select"
-        :filter-by-query="true"
-        :styles="autoCompleteStyles"
-        class="col s8">
-        <template slot="suggestion-item" slot-scope="{ suggestion }">
-          <span>{{ suggestion.name }}</span>
-        </template>
-      </vue-simple-suggest>
-      <el-button type="success" @click="registerProcessing" round class="col s2">登録</el-button>
-    </div>
+  <div id="app">
+    <h4>選手名検索</h4>
+    <v-container>
+      <v-row>
+        <v-col>
+          <vue-simple-suggest
+              v-model="selected"
+              :list="players"
+              display-attribute="name"
+              value-attribute="id"
+              mode="select"
+              :filter-by-query="true"
+              :styles="autoCompleteStyles">
+            <template slot="suggestion-item" slot-scope="{ suggestion }">
+              <span>{{ suggestion.name }}</span>
+            </template>
+          </vue-simple-suggest>
+        </v-col>
+        <v-col>
+          <el-button type="success" @click="registerProcessing" round>登録</el-button>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
