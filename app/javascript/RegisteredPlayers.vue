@@ -1,14 +1,14 @@
 <template>
-  <div id="app" class="row">
-    <div class="col s12">
+  <v-container :fluid="true" id="app">
+    <div>
       <h5>野手</h5>
       <registered-batters :batters="registeredPlayers['batters']"></registered-batters>
     </div>
-    <div class="col s12">
+    <div>
       <h5>投手</h5>
       <registered-pitchers :pitchers="registeredPlayers['pitchers']"></registered-pitchers>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>

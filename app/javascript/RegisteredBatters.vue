@@ -5,6 +5,7 @@
       @on-selected-rows-change="selectionChanged"
       :columns="columns"
       :rows="batters"
+      styleClass="vgt-table striped"
       :sort-options="{
         enabled: true,
         initialSortBy: [
@@ -21,7 +22,10 @@
     >
       <template slot="table-row" slot-scope="props">
         <span v-if="props.column.field === 'name'">
-          <a :href="playerUrl(props.row.url)" target="_blank" rel="noopener noreferrer">{{props.row.name}}</a>
+          <a :href="playerUrl(props.row.url)" target="_blank" rel="noopener noreferrer" class="player-name">{{props.row.name}}</a>
+        </span>
+        <span v-else-if="props.column.field === 'team'">
+          <span :class="setTeamClass(props.row.team)">{{props.row.team}}</span>
         </span>
         <span v-else>
           {{props.formattedRow[props.column.field]}}
@@ -47,6 +51,20 @@ export default {
   data: function () {
     return {
       checkedPlayers: [],
+      teamClass: {
+        'ソフトバンク': 'hawks',
+        'ロッテ': 'marines',
+        '西武': 'lions',
+        '楽天': 'eagles',
+        '日本ハム': 'fighters',
+        'オリックス': 'buffaloes',
+        '巨人': 'giants',
+        '阪神': 'tigers',
+        '中日': 'dragons',
+        'DeNA': 'baystars',
+        '広島': 'carp',
+        'ヤクルト': 'swallows'
+      },
       columns: [
         {
           label: '背番号',
@@ -172,6 +190,9 @@ export default {
     },
     playerUrl(url) {
       return 'https://baseball.yahoo.co.jp' + url
+    },
+    setTeamClass(team_name) {
+      return this.teamClass[team_name]
     }
   }
 }
@@ -192,5 +213,81 @@ export default {
   position: initial;
   opacity: 1.0;
   pointer-events: auto;
+}
+
+.player-name {
+  font-weight: bold;
+}
+
+.hawks:before {
+  content: '';
+  border-left: thick solid #FEA409;
+  padding-left: 8px;
+}
+
+.marines:before {
+  content: '';
+  border-left: thick solid #6E6E6E;
+  padding-left: 8px;
+}
+
+.lions:before {
+  content: '';
+  border-left: thick solid #192546;
+  padding-left: 8px;
+}
+
+.eagles:before {
+  content: '';
+  border-left: thick solid #7F001E;
+  padding-left: 8px;
+}
+
+.fighters:before {
+  content: '';
+  border-left: thick solid #285A8A;
+  padding-left: 8px;
+}
+
+.buffaloes:before {
+  content: '';
+  border-left: thick solid #34328A;
+  padding-left: 8px;
+}
+
+.giants:before {
+  content: '';
+  border-left: thick solid #E96D06;
+  padding-left: 8px;
+}
+
+.tigers:before {
+  content: '';
+  border-left: thick solid #FED80C;
+  padding-left: 8px;
+}
+
+.dragons:before {
+  content: '';
+  border-left: thick solid #113C7C;
+  padding-left: 8px;
+}
+
+.baystars:before {
+  content: '';
+  border-left: thick solid #1182D8;
+  padding-left: 8px;
+}
+
+.carp:before {
+  content: '';
+  border-left: thick solid #C70019;
+  padding-left: 8px;
+}
+
+.swallows:before {
+  content: '';
+  border-left: thick solid #1A753E;
+  padding-left: 8px;
 }
 </style>
