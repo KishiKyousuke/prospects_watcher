@@ -19,6 +19,10 @@
   },
   "version": "0.1.0",
   "devDependencies": {
+    "@mdi/font": "^5.8.55",
+    "@mdi/js": "^5.8.55",
+    "file-loader": "^6.2.0",
+    "material-design-icons-iconfont": "^6.1.0",
     "rails-ujs": "^5.2.4-4",
     "webpack-dev-server": "^3.11.0"
   }
