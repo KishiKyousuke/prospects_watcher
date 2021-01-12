@@ -112,7 +112,7 @@ div.col {
 /deep/ .vue-simple-suggest.designed {
   width: 264px;
   padding: 0;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 /deep/ .input-wrapper input {

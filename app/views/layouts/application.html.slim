@@ -10,29 +10,33 @@ html
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
   body(style="display: flex; flex-direction: column; min-height: 100vh;")
     header
-      nav.indigo.darken-4
-        ul.left.hide-on-med-and-down#nav-mobile
+      nav.grey.darken-3 style="height: 72px;"
+        .nav-wrapper
+          .brand-logo
+            = link_to image_tag("/header_logo_white.png", size: '70x70'), registered_players_path
+          ul.left.hide-on-med-and-down#nav-mobile style="margin-left: 80px; line-height: 72px;"
+            - if user_signed_in?
+              li style="color: black; display: block;"
+                #js-player-search
+              li
+                = link_to t('registered_players.index.link'), registered_players_path
+              li
+                = link_to t('players.index.link'), players_path
+            - else
+              - if controller_name != 'sessions'
+                = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
+              - if devise_mapping.registerable? && controller_name != 'registrations'
+                = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
           - if user_signed_in?
-            li style="color: black;"
-              #js-player-search
-            li
-              = link_to t('registered_players.index.link'), registered_players_path
-            li
-              = link_to t('players.index.link'), players_path
-            li
-              = link_to t('devise.registrations.edit.link'), edit_user_registration_path
-            li
-              = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
-          - else
-            - if controller_name != 'sessions'
-              = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
-            - if devise_mapping.registerable? && controller_name != 'registrations'
-              = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
+            ul.right style="line-height: 72px;"
+              li
+                = link_to t('devise.registrations.edit.link'), edit_user_registration_path
+              li
+                = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
     .notifications
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
     .main(style="flex: 1 0 auto;")
       = yield
-    footer.page-footer.indigo.darken-4
+    footer.page-footer.grey.darken-3
       .center 2020 CopyrightText
-
