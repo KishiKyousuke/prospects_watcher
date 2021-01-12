@@ -25,7 +25,7 @@
           <a :href="playerUrl(props.row.url)" target="_blank" rel="noopener noreferrer" class="player-name">{{props.row.name}}</a>
         </span>
         <span v-else-if="props.column.field === 'team'">
-          <span :class="setTeamClass(props.row.team)">{{props.row.team}}</span>
+          <span :class="props.row.english_team_name">{{props.row.team}}</span>
         </span>
         <span v-else>
           {{props.formattedRow[props.column.field]}}
@@ -51,20 +51,6 @@ export default {
   data: function () {
     return {
       checkedPlayers: [],
-      teamClass: {
-        'ソフトバンク': 'hawks',
-        'ロッテ': 'marines',
-        '西武': 'lions',
-        '楽天': 'eagles',
-        '日本ハム': 'fighters',
-        'オリックス': 'buffaloes',
-        '巨人': 'giants',
-        '阪神': 'tigers',
-        '中日': 'dragons',
-        'DeNA': 'baystars',
-        '広島': 'carp',
-        'ヤクルト': 'swallows'
-      },
       columns: [
         {
           label: '背番号',
@@ -177,9 +163,6 @@ export default {
     },
     playerUrl(url) {
       return 'https://baseball.yahoo.co.jp' + url
-    },
-    setTeamClass(team_name) {
-      return this.teamClass[team_name]
     }
   }
 }
