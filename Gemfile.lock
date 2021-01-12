@@ -170,6 +170,7 @@ GEM
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
+    retryable (3.0.5)
     rexml (3.2.4)
     rubocop (1.6.0)
       parallel (~> 1.10)
@@ -272,6 +273,7 @@ DEPENDENCIES
   puma (~> 4.1)
   rails (~> 6.0.3, >= 6.0.3.4)
   rails-i18n
+  retryable
   rubocop-performance
   rubocop-rails
   sass-rails (>= 6)

@@ -5,7 +5,10 @@ namespace :scrape do
   task player_record: :environment do
     Rake::Task['scrape:batter_record'].invoke
     Rake::Task['scrape:pitcher_record'].invoke
-    ScrapingLog.create!
+    ScrapingLog.create!(result: 'success')
+  rescue => e
+    puts e
+    ScrapingLog.create!(result: e)
   end
 
   desc 'Yahooスポーツから野手の成績を取得'
