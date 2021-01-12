@@ -17,7 +17,19 @@
           </vue-simple-suggest>
         </v-col>
         <v-col>
-          <el-button type="success" size="small" @click="registerProcessing" round>登録</el-button>
+          <v-btn
+              class="mx-2"
+              fab
+              dark
+              small
+              color="light-green"
+              :disabled="selected === null"
+              @click="registerProcessing"
+          >
+            <v-icon dark>
+              mdi-plus
+            </v-icon>
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -33,7 +45,7 @@ export default {
     return {
       teams: [],
       players: [],
-      selected: {},
+      selected: {}
     }
   },
   components: {
@@ -68,7 +80,7 @@ export default {
       }).catch(() => {
         this.duplicateErrorNotice()
       }).finally(() => {
-        this.selected = ''
+        this.selected = null
       })
     },
     registerPlayer: async function() {
