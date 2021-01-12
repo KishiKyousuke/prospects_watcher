@@ -11,23 +11,23 @@ html
   body(style="display: flex; flex-direction: column; min-height: 100vh;")
     header
       nav.indigo.darken-4
-        .nav-wrapper
-          a.brand-logo.center ProspectsWatcher
-          ul.left.hide-on-med-and-down#nav-mobile
-            - if user_signed_in?
-              li
-                = link_to t('registered_players.index.link'), registered_players_path
-              li
-                = link_to t('players.index.link'), players_path
-              li
-                = link_to t('devise.registrations.edit.link'), edit_user_registration_path
-              li
-                = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
-            - else
-              - if controller_name != 'sessions'
-                = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
-              - if devise_mapping.registerable? && controller_name != 'registrations'
-                = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
+        ul.left.hide-on-med-and-down#nav-mobile
+          - if user_signed_in?
+            li style="color: black;"
+              #js-player-search
+            li
+              = link_to t('registered_players.index.link'), registered_players_path
+            li
+              = link_to t('players.index.link'), players_path
+            li
+              = link_to t('devise.registrations.edit.link'), edit_user_registration_path
+            li
+              = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
+          - else
+            - if controller_name != 'sessions'
+              = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
+            - if devise_mapping.registerable? && controller_name != 'registrations'
+              = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
     .notifications
       - flash.each do |key, value|
         = content_tag(:div, value, class: key)
