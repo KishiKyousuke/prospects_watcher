@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <h4>チーム別選手一覧</h4>
     <v-container>
+      <h4>チーム別選手一覧</h4>
       <h5 style="font-weight: bold;">セ・リーグ</h5>
       <v-row>
         <v-expansion-panels popout>
-          <v-expansion-panel v-for="(team, i) in teams['central']" :key="i">
+          <v-expansion-panel v-for="team in teams['central']" :key="team['name']">
             <v-expansion-panel-header>
-              <v-img :src="displayTeamLogo(team['name'])" max-width="64px"></v-img>
+              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
               <span>{{team['formal_name']}}</span>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -21,7 +21,7 @@
         <v-expansion-panels popout>
           <v-expansion-panel v-for="team in teams['pacific']" :key="team['name']">
             <v-expansion-panel-header>
-              <v-img :src="displayTeamLogo(team['name'])" max-width="64px"></v-img>
+              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
               <span>{{team['formal_name']}}</span>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -43,21 +43,7 @@ export default {
     return {
       teams: {},
       registeredPlayers: [],
-      showTeamPlayersComponent: false,
-      teamLogos: {
-        'ソフトバンク': 'hawks_logo.png',
-        'ロッテ': 'marines_logo.png',
-        '西武': 'lions_logo.png',
-        '楽天': 'eagles_logo.png',
-        '日本ハム': 'fighters_logo.png',
-        'オリックス': 'buffaloes_logo.png',
-        '巨人': 'giants_logo.png',
-        '阪神': 'tigers_logo.png',
-        '中日': 'dragons_logo.png',
-        'DeNA': 'baystars_logo.png',
-        '広島': 'carp_logo.png',
-        'ヤクルト': 'swallows_logo.png'
-      }
+      showTeamPlayersComponent: false
     }
   },
   created() {
@@ -80,7 +66,7 @@ export default {
       return axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
     },
     displayTeamLogo(team_name) {
-      return 'team_logo/' + this.teamLogos[team_name]
+      return `team_logo/${team_name}_logo.png`
     }
   }
 }

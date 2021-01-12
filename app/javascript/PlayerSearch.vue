@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <h4>選手名検索</h4>
     <v-container>
+      <h4>選手名検索</h4>
       <v-row>
         <v-col>
           <vue-simple-suggest
