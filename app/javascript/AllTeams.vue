@@ -1,24 +1,36 @@
 <template>
-  <div id="app" class="row" v-loading="loading">
-    <div class="col s12">
+  <div id="app">
+    <v-container>
       <h4>チーム別選手一覧</h4>
-    </div>
-    <div class="col l6 s12">
-      <h5 style="font-weight: bold">セ・リーグ</h5>
-      <el-collapse v-model="activeNamesCentral">
-        <el-collapse-item v-for="(team, i) in teams['central']" :key="team['name']" :title="team['formal_name']" :name="i">
-          <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
-    <div class="col l6 s12">
+      <h5 style="font-weight: bold;">セ・リーグ</h5>
+      <v-row>
+        <v-expansion-panels popout>
+          <v-expansion-panel v-for="team in teams['central']" :key="team['name']">
+            <v-expansion-panel-header>
+              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
+              <span>{{team['formal_name']}}</span>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
       <h5 style="font-weight: bold">パ・リーグ</h5>
-      <el-collapse v-model="activeNamesPacific">
-        <el-collapse-item v-for="(team, i) in teams['pacific']" :key="team['name']" :title="team['formal_name']" :name="i">
-          <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
-        </el-collapse-item>
-      </el-collapse>
-    </div>
+      <v-row>
+        <v-expansion-panels popout>
+          <v-expansion-panel v-for="team in teams['pacific']" :key="team['name']">
+            <v-expansion-panel-header>
+              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
+              <span>{{team['formal_name']}}</span>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -29,12 +41,9 @@ import {axiosClient} from './axios_client'
 export default {
   data: function () {
     return {
-      activeNamesCentral: ['1'],
-      activeNamesPacific: ['1'],
       teams: {},
       registeredPlayers: [],
-      showTeamPlayersComponent: false,
-      loading: true
+      showTeamPlayersComponent: false
     }
   },
   created() {
@@ -55,18 +64,20 @@ export default {
     },
     fetchAllPlayers() {
       return axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
+    },
+    displayTeamLogo(team_name) {
+      return `team_logo/${team_name}_logo.png`
     }
   }
 }
 </script>
 
 <style scoped>
-</style>
-
-<style lang="scss" scoped>
-/deep/ .el-collapse-item__header{
-  font-size: 2rem;
-  line-height: 40px;
-  height: 72px;
+span{
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
+  text-align: left;
+  margin-left: 24px;
 }
 </style>

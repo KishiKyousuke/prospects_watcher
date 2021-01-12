@@ -14,6 +14,7 @@ class PlayersDataFormatter
       hash[team.league.to_sym] << {
         name: team.name,
         formal_name: team.formal_name,
+        english_team_name: team.english_name,
         batters: sort_by_number(team_batters),
         pitchers: sort_by_number(team_pitchers)
       }
