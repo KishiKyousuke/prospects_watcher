@@ -15,15 +15,15 @@
     "vue-loader": "^15.9.5",
     "vue-simple-suggest": "^1.10.3",
     "vue-template-compiler": "^2.6.12",
-    "vuetify": "^2.4.2"
-  },
-  "version": "0.1.0",
-  "devDependencies": {
+    "vuetify": "^2.4.2",
     "@mdi/font": "^5.8.55",
     "@mdi/js": "^5.8.55",
     "file-loader": "^6.2.0",
     "material-design-icons-iconfont": "^6.1.0",
-    "rails-ujs": "^5.2.4-4",
+    "rails-ujs": "^5.2.4-4"
+  },
+  "version": "0.1.0",
+  "devDependencies": {
     "webpack-dev-server": "^3.11.0"
   }
 }
