@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <vue-good-table
       v-if="pitchers && pitchers.length"
       @on-selected-rows-change="selectionChanged"
@@ -32,16 +32,31 @@
         </span>
       </template>
       <div slot="selected-row-actions">
+        <v-dialog
+            v-model="dialog"
+            width="600px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <el-button v-bind="attrs" v-on="on" type="primary" size="small" round>比較する</el-button>
+          </template>
+          <v-card>
+            <compare-pitcher-score-table :checked-players="checkedPlayers"></compare-pitcher-score-table>
+          </v-card>
+        </v-dialog>
         <el-button type="danger" size="small" round @click="releaseProcessing">解除する</el-button>
       </div>
     </vue-good-table>
-  </div>
+  </v-app>
 </template>
 
 <script>
 import {axiosClient} from './axios_client'
+import comparePitcherScoreTable from './ComparePitcherScoreTable'
 
 export default {
+  components: {
+    comparePitcherScoreTable
+  },
   props: {
     pitchers: {
       type: Array,
@@ -51,6 +66,7 @@ export default {
   data: function () {
     return {
       checkedPlayers: [],
+      dialog: false,
       columns: [
         {
           label: '背番号',
@@ -183,6 +199,11 @@ export default {
   position: initial;
   opacity: 1.0;
   pointer-events: auto;
+}
+
+.el-button {
+  color: white;
+  font-weight: bold;
 }
 
 .player-name {
