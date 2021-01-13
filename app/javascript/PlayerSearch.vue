@@ -1,24 +1,35 @@
 <template>
   <div id="app">
     <v-container>
-      <h4>選手名検索</h4>
       <v-row>
         <v-col>
           <vue-simple-suggest
+              placeholder="選手名で登録"
               v-model="selected"
               :list="players"
               display-attribute="name"
               value-attribute="id"
               mode="select"
-              :filter-by-query="true"
-              :styles="autoCompleteStyles">
+              :filter-by-query="true">
             <template slot="suggestion-item" slot-scope="{ suggestion }">
               <span>{{ suggestion.name }}</span>
             </template>
           </vue-simple-suggest>
         </v-col>
         <v-col>
-          <el-button type="success" @click="registerProcessing" round>登録</el-button>
+          <v-btn
+              class="mx-2"
+              fab
+              dark
+              small
+              color="light-green"
+              :disabled="selected === null"
+              @click="registerProcessing"
+          >
+            <v-icon dark>
+              mdi-plus
+            </v-icon>
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -34,10 +45,7 @@ export default {
     return {
       teams: [],
       players: [],
-      selected: {},
-      autoCompleteStyles: {
-        suggestItem: 'left-align'
-      }
+      selected: {}
     }
   },
   components: {
@@ -72,7 +80,7 @@ export default {
       }).catch(() => {
         this.duplicateErrorNotice()
       }).finally(() => {
-        this.selected = ''
+        this.selected = null
       })
     },
     registerPlayer: async function() {
@@ -97,15 +105,22 @@ export default {
 </script>
 
 <style scoped>
-.m-auto {
-  margin: auto;
+div.col {
+  padding: 0 8px;
 }
 
-.float-none {
+/deep/ .vue-simple-suggest.designed {
+  width: 264px;
+  padding: 0;
+  margin-top: 16px;
+}
+
+/deep/ .input-wrapper input {
+  height: 40px;
+}
+
+/deep/ .suggest-item {
   float: none;
-}
-
-#search-field-title{
-  margin-bottom: 40px;
+  line-height: 32px;
 }
 </style>
