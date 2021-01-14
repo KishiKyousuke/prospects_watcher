@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app">
+  <div id="app">
     <vue-good-table
       v-if="batters && batters.length"
       @on-selected-rows-change="selectionChanged"
@@ -46,7 +46,7 @@
         <el-button type="danger" round size="small" @click="releaseProcessing">解除する</el-button>
       </div>
     </vue-good-table>
-  </v-app>
+  </div>
 </template>
 
 <script>
