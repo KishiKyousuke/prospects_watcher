@@ -1,14 +1,21 @@
 <template>
-  <v-container :fluid="true" id="app">
-    <div>
-      <h5>野手</h5>
-      <registered-batters :batters="registeredPlayers['batters']"></registered-batters>
-    </div>
-    <div>
-      <h5>投手</h5>
-      <registered-pitchers :pitchers="registeredPlayers['pitchers']"></registered-pitchers>
-    </div>
-  </v-container>
+  <v-app>
+    <v-container :fluid="true" id="app">
+      <h5 class="center">登録済み選手一覧</h5>
+      <v-tabs v-model="tab" :grow="true">
+        <v-tab>野手</v-tab>
+        <v-tab>投手</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item>
+          <registered-batters :batters="registeredPlayers['batters']"></registered-batters>
+        </v-tab-item>
+        <v-tab-item>
+          <registered-pitchers :pitchers="registeredPlayers['pitchers']"></registered-pitchers>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -19,7 +26,8 @@ import {axiosClient} from './axios_client'
 export default {
   data: function () {
     return {
-      registeredPlayers: {}
+      registeredPlayers: {},
+      tab: null
     }
   },
   components: {
@@ -36,3 +44,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.v-tab {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+h5 {
+  font-weight: bold;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
+}
+</style>
