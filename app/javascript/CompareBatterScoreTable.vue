@@ -1,9 +1,9 @@
 <template>
   <v-container id="app">
-    <h4>選手比較</h4>
+    <v-btn icon fab small @click="closeModal()"><v-icon>mdi-close-circle</v-icon></v-btn>
     <table>
       <tr>
-        <td>{{playerX.name}}</td><th>選手名</th><td>{{playerY.name}}</td>
+        <td :class="['player-name', playerX['english_team_name']]">{{playerX.name}}</td><th>選手名</th><td :class="['player-name', playerY['english_team_name']]">{{playerY.name}}</td>
       </tr>
       <tr>
         <td :class="{ emphasis: atBatX() }">{{playerX['at_bat']}}</td><th>打数</th><td :class="{ emphasis: atBatY() }">{{playerY['at_bat']}}</td>
@@ -66,6 +66,9 @@ export default {
     [this.playerX, this.playerY] = this.checkedPlayers
   },
   methods: {
+    closeModal() {
+      this.$emit('close-modal')
+    },
     atBatX() {
       return parseInt(this.playerX['at_bat']) >= parseInt(this.playerY['at_bat'])
     },
@@ -149,8 +152,42 @@ export default {
 </script>
 
 <style scoped>
-table > tr > td,th {
+.v-container {
+  position: relative;
+}
+
+table {
+  width: 80%;
+  margin: auto;
+  border: 1px solid #dcdfe6;
+  border-collapse: collapse
+}
+
+table th {
+  color: #606266;
+  vertical-align: bottom;
+  border-bottom: 1px solid #dcdfe6;
+  background: linear-gradient(#f4f5f8,#f1f3f6);
+  padding: 10px 0;
   text-align: center;
+}
+
+table td {
+  padding: 10px 0;
+  text-align: center;
+  width: 35%;
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  background: linear-gradient(#f4f5f8,#f1f3f6);
+}
+
+.v-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .emphasis {
@@ -158,4 +195,75 @@ table > tr > td,th {
   color: red;
 }
 
+.hawks {
+  content: '';
+  border-bottom: thick solid #FEA409;
+  padding-bottom: 4px;
+}
+
+.marines {
+  content: '';
+  border-bottom: thick solid #6E6E6E;
+  padding-bottom: 4px;
+}
+
+.lions {
+  content: '';
+  border-bottom: thick solid #192546;
+  padding-bottom: 4px;
+}
+
+.eagles {
+  content: '';
+  border-bottom: thick solid #7F001E;
+  padding-bottom: 4px;
+}
+
+.fighters {
+  content: '';
+  border-bottom: thick solid #285A8A;
+  padding-bottom: 4px;
+}
+
+.buffaloes {
+  content: '';
+  border-bottom: thick solid #34328A;
+  padding-bottom: 4px;
+}
+
+.giants {
+  content: '';
+  border-bottom: thick solid #E96D06;
+  padding-bottom: 4px;
+}
+
+.tigers {
+  content: '';
+  border-bottom: thick solid #FED80C;
+  padding-bottom: 4px;
+}
+
+.dragons {
+  content: '';
+  border-bottom: thick solid #113C7C;
+  padding-bottom: 4px;
+}
+
+.baystars {
+  content: '';
+  border-bottom: thick solid #1182D8;
+  padding-bottom: 4px;
+}
+
+.carp {
+  content: '';
+  border-bottom: thick solid #C70019;
+  padding-bottom: 4px;
+}
+
+.swallows {
+  content: '';
+  border-bottom: thick solid #1A753E;
+  padding-bottom: 4px;
+}
 </style>
