@@ -3,40 +3,88 @@
     <v-btn icon fab small @click="closeModal()"><v-icon>mdi-close-circle</v-icon></v-btn>
     <table>
       <tr>
-        <td :class="['player-name', playerX['english_team_name']]">{{playerX.name}}</td><th>選手名</th><td :class="['player-name', playerY['english_team_name']]">{{playerY.name}}</td>
+        <td :class="['player-name', playerX['english_team_name']]">{{playerX.name}}</td>
+        <th>選手名</th>
+        <td :class="['player-name', playerY['english_team_name']]">{{playerY.name}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: earnedRunAverageX() }">{{playerX['earned_run_average']}}</td><th>防御率</th><td :class="{ emphasis: earnedRunAverageY() }">{{playerY['earned_run_average']}}</td>
+        <td :class="{ emphasis: isEmphasisFloat(playerY['earned_run_average'], playerX['earned_run_average']) }">
+          {{playerX['earned_run_average']}}
+        </td>
+        <th>防御率</th>
+        <td :class="{ emphasis: isEmphasisFloat(playerX['earned_run_average'], playerY['earned_run_average']) }">
+          {{playerY['earned_run_average']}}
+        </td>
       </tr>
       <tr>
-        <td :class="{ emphasis: winX() }">{{playerX['win']}}</td><th>勝</th><td :class="{ emphasis: winY() }">{{playerY['win']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerX['win'], playerY['win']) }">{{playerX['win']}}</td>
+        <th>勝</th>
+        <td :class="{ emphasis: isEmphasisInt(playerY['win'], playerX['win']) }">{{playerY['win']}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: loseX() }">{{playerX['lose']}}</td><th>負</th><td :class="{ emphasis: loseY() }">{{playerY['lose']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerY['lose'], playerX['lose']) }">{{playerX['lose']}}</td>
+        <th>負</th>
+        <td :class="{ emphasis: isEmphasisInt(playerX['lose'], playerY['lose']) }">{{playerY['lose']}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: inningsPitchedX() }">{{playerX['innings_pitched']}}</td><th>投球回</th><td :class="{ emphasis: inningsPitchedY() }">{{playerY['innings_pitched']}}</td>
+        <td :class="{ emphasis: isEmphasisFloat(playerX['innings_pitched'], playerY['innings_pitched']) }">
+          {{playerX['innings_pitched']}}
+        </td>
+        <th>投球回</th>
+        <td :class="{ emphasis: isEmphasisFloat(playerY['innings_pitched'], playerX['innings_pitched']) }">
+          {{playerY['innings_pitched']}}
+        </td>
       </tr>
       <tr>
-        <td :class="{ emphasis: pitchedX() }">{{playerX['pitched']}}</td><th>登板</th><td :class="{ emphasis: pitchedY() }">{{playerY['pitched']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerX['pitched'], playerY['pitched']) }">{{playerX['pitched']}}</td>
+        <th>登板</th>
+        <td :class="{ emphasis: isEmphasisInt(playerY['pitched'], playerX['pitched']) }">{{playerY['pitched']}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: numberOfSaveX() }">{{playerX['number_of_save']}}</td><th>セーブ</th><td :class="{ emphasis: numberOfSaveY() }">{{playerY['number_of_save']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerX['number_of_save'], playerY['number_of_save']) }">
+          {{playerX['number_of_save']}}
+        </td>
+        <th>セーブ</th>
+        <td :class="{ emphasis: isEmphasisInt(playerY['number_of_save'], playerX['number_of_save']) }">
+          {{playerY['number_of_save']}}
+        </td>
       </tr>
       <tr>
-        <td :class="{ emphasis: holdPointX() }">{{playerX['hold_point']}}</td><th>HP</th><td :class="{ emphasis: holdPointY() }">{{playerY['hold_point']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerX['hold_point'], playerY['hold_point']) }">{{playerX['hold_point']}}</td>
+        <th>HP</th>
+        <td :class="{ emphasis: isEmphasisInt(playerY['hold_point'], playerX['hold_point']) }">{{playerY['hold_point']}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: strikeoutX() }">{{playerX['strikeout']}}</td><th>三振</th><td :class="{ emphasis: strikeoutY() }">{{playerY['strikeout']}}</td>
+        <td :class="{ emphasis: isEmphasisInt(playerX['strikeout'], playerY['strikeout']) }">{{playerX['strikeout']}}</td>
+        <th>三振</th>
+        <td :class="{ emphasis: isEmphasisInt(playerY['strikeout'], playerX['strikeout']) }">{{playerY['strikeout']}}</td>
       </tr>
       <tr>
-        <td :class="{ emphasis: strikeoutsPerNineInningsX() }">{{playerX['strikeouts_per_nine_innings']}}</td><th>奪三振率</th><td :class="{ emphasis: strikeoutsPerNineInningsY() }">{{playerY['strikeouts_per_nine_innings']}}</td>
+        <td :class="{ emphasis: isEmphasisFloat(playerX['strikeouts_per_nine_innings'], playerY['strikeouts_per_nine_innings']) }">
+          {{playerX['strikeouts_per_nine_innings']}}
+        </td>
+        <th>奪三振率</th>
+        <td :class="{ emphasis: isEmphasisFloat(playerY['strikeouts_per_nine_innings'], playerX['strikeouts_per_nine_innings']) }">
+          {{playerY['strikeouts_per_nine_innings']}}
+        </td>
       </tr>
       <tr>
-        <td :class="{ emphasis: strikeoutToWalkRatioX() }">{{playerX['strikeout_to_walk_ratio']}}</td><th>K/BB</th><td :class="{ emphasis: strikeoutToWalkRatioY() }">{{playerY['strikeout_to_walk_ratio']}}</td>
+        <td :class="{ emphasis: isEmphasisFloat(playerX['strikeout_to_walk_ratio'], playerY['strikeout_to_walk_ratio']) }">
+          {{playerX['strikeout_to_walk_ratio']}}
+        </td>
+        <th>K/BB</th>
+        <td :class="{ emphasis: isEmphasisFloat(playerY['strikeout_to_walk_ratio'], playerX['strikeout_to_walk_ratio']) }">
+          {{playerY['strikeout_to_walk_ratio']}}
+        </td>
       </tr>
       <tr>
-        <td :class="{ emphasis: walksAndHitsPerInningsPitchedX() }">{{playerX['walks_and_hits_per_innings_pitched']}}</td><th>WHIP</th><td :class="{ emphasis: walksAndHitsPerInningsPitchedY() }">{{playerY['walks_and_hits_per_innings_pitched']}}</td>
+        <td :class="{ emphasis: isEmphasisFloat(playerY['walks_and_hits_per_innings_pitched'], playerX['walks_and_hits_per_innings_pitched']) }">
+          {{playerX['walks_and_hits_per_innings_pitched']}}
+        </td>
+        <th>WHIP</th>
+        <td :class="{ emphasis: isEmphasisFloat(playerX['walks_and_hits_per_innings_pitched'], playerY['walks_and_hits_per_innings_pitched']) }">
+          {{playerY['walks_and_hits_per_innings_pitched']}}
+        </td>
       </tr>
     </table>
   </v-container>
@@ -63,71 +111,11 @@ export default {
     closeModal() {
       this.$emit('close-modal')
     },
-    earnedRunAverageX() {
-      return parseFloat(this.playerX['earned_run_average']) <= parseFloat(this.playerY['earned_run_average'])
+    isEmphasisInt(playerScoreBefore, playerScoreAfter) {
+      return parseInt(playerScoreBefore) >= parseInt(playerScoreAfter)
     },
-    earnedRunAverageY() {
-      return parseFloat(this.playerX['earned_run_average']) >= parseFloat(this.playerY['earned_run_average'])
-    },
-    winX() {
-      return parseInt(this.playerX['win']) >= parseInt(this.playerY['win'])
-    },
-    winY() {
-      return parseInt(this.playerX['win']) <= parseInt(this.playerY['win'])
-    },
-    loseX() {
-      return parseFloat(this.playerX['lose']) <= parseFloat(this.playerY['lose'])
-    },
-    loseY() {
-      return parseFloat(this.playerX['lose']) >= parseFloat(this.playerY['lose'])
-    },
-    inningsPitchedX() {
-      return parseFloat(this.playerX['innings_pitched']) >= parseFloat(this.playerY['innings_pitched'])
-    },
-    inningsPitchedY() {
-      return parseFloat(this.playerX['innings_pitched']) <= parseFloat(this.playerY['innings_pitched'])
-    },
-    pitchedX() {
-      return parseInt(this.playerX['pitched']) >= parseInt(this.playerY['pitched'])
-    },
-    pitchedY() {
-      return parseInt(this.playerX['pitched']) <= parseInt(this.playerY['pitched'])
-    },
-    numberOfSaveX() {
-      return parseInt(this.playerX['number_of_save']) >= parseInt(this.playerY['number_of_save'])
-    },
-    numberOfSaveY() {
-      return parseInt(this.playerX['number_of_save']) <= parseInt(this.playerY['number_of_save'])
-    },
-    holdPointX() {
-      return parseInt(this.playerX['hold_point']) >= parseInt(this.playerY['hold_point'])
-    },
-    holdPointY() {
-      return parseInt(this.playerX['hold_point']) <= parseInt(this.playerY['hold_point'])
-    },
-    strikeoutX() {
-      return parseInt(this.playerX['strikeout']) >= parseInt(this.playerY['strikeout'])
-    },
-    strikeoutY() {
-      return parseInt(this.playerX['strikeout']) <= parseInt(this.playerY['strikeout'])
-    },
-    strikeoutsPerNineInningsX() {
-      return parseFloat(this.playerX['strikeouts_per_nine_innings']) >= parseFloat(this.playerY['strikeouts_per_nine_innings'])
-    },
-    strikeoutsPerNineInningsY() {
-      return parseFloat(this.playerX['strikeouts_per_nine_innings']) <= parseFloat(this.playerY['strikeouts_per_nine_innings'])
-    },
-    strikeoutToWalkRatioX() {
-      return parseFloat(this.playerX['strikeout_to_walk_ratio']) >= parseFloat(this.playerY['strikeout_to_walk_ratio'])
-    },
-    strikeoutToWalkRatioY() {
-      return parseFloat(this.playerX['strikeout_to_walk_ratio']) <= parseFloat(this.playerY['strikeout_to_walk_ratio'])
-    },
-    walksAndHitsPerInningsPitchedX() {
-      return parseFloat(this.playerX['walks_and_hits_per_innings_pitched']) <= parseFloat(this.playerY['walks_and_hits_per_innings_pitched'])
-    },
-    walksAndHitsPerInningsPitchedY() {
-      return parseFloat(this.playerX['walks_and_hits_per_innings_pitched']) >= parseFloat(this.playerY['walks_and_hits_per_innings_pitched'])
+    isEmphasisFloat(playerScoreBefore, playerScoreAfter) {
+      return parseFloat(playerScoreBefore) >= parseFloat(playerScoreAfter)
     }
   }
 }
