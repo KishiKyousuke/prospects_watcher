@@ -63,7 +63,7 @@ export default {
     }
   },
   mounted() {
-    [this.playerX, this.playerY] = this.checkedPlayers
+    [this.playerY, this.playerX] = this.checkedPlayers
   },
   methods: {
     closeModal() {
