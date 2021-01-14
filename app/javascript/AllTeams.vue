@@ -1,37 +1,46 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <v-container>
-      <h4>チーム別選手一覧</h4>
-      <h5 style="font-weight: bold;">セ・リーグ</h5>
-      <v-row>
-        <v-expansion-panels popout>
-          <v-expansion-panel v-for="team in teams['central']" :key="team['name']">
-            <v-expansion-panel-header>
-              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
-              <span>{{team['formal_name']}}</span>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-row>
-      <h5 style="font-weight: bold">パ・リーグ</h5>
-      <v-row>
-        <v-expansion-panels popout>
-          <v-expansion-panel v-for="team in teams['pacific']" :key="team['name']">
-            <v-expansion-panel-header>
-              <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
-              <span>{{team['formal_name']}}</span>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-row>
+      <h5 class="center">チームから探す</h5>
+      <v-tabs v-model="tab" :grow="true" :slider-size="5" height="60px">
+        <v-tab class="central-tab" @click="tabsSliderColor = '#14A26F'">セ・リーグ</v-tab>
+        <v-tab class="pacific-tab" @click="tabsSliderColor = '#30A6CC'">パ・リーグ</v-tab>
+        <v-tabs-slider :color="changeColor" />
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item>
+          <v-row>
+            <v-expansion-panels popout focusable>
+              <v-expansion-panel v-for="team in teams['central']" :key="team['name']">
+                <v-expansion-panel-header>
+                  <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
+                  <span>{{team['formal_name']}}</span>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-row>
+        </v-tab-item>
+        <v-tab-item>
+          <v-row>
+            <v-expansion-panels focusable>
+              <v-expansion-panel v-for="team in teams['pacific']" :key="team['name']">
+                <v-expansion-panel-header>
+                  <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
+                  <span>{{team['formal_name']}}</span>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-row>
+        </v-tab-item>
+      </v-tabs-items>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -43,7 +52,9 @@ export default {
     return {
       teams: {},
       registeredPlayers: [],
-      showTeamPlayersComponent: false
+      showTeamPlayersComponent: false,
+      tab: null,
+      tabsSliderColor: '#14A26F'
     }
   },
   created() {
@@ -57,6 +68,11 @@ export default {
   },
   components: {
     TeamPlayers
+  },
+  computed: {
+    changeColor() {
+      return this.tabsSliderColor
+    }
   },
   methods: {
     fetchRegisteredPlayers() {
@@ -79,5 +95,23 @@ span{
   font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
   text-align: left;
   margin-left: 24px;
+}
+
+.v-tab {
+  font-size: 1.3rem;
+  font-weight: bold
+}
+
+.central-tab {
+  color: #14A26F
+}
+
+.pacific-tab {
+  color: #30A6CC
+}
+
+h5 {
+  font-weight: bold;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
 }
 </style>
