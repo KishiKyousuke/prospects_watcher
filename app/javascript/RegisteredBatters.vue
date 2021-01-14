@@ -37,7 +37,7 @@
             width="600px"
         >
           <template v-slot:activator="{ on, attrs }">
-            <el-button v-bind="attrs" v-on="on" type="primary" size="small" round>比較する</el-button>
+            <el-button v-bind="attrs" v-on="on" type="primary" size="small" round :disabled="checkedPlayers.length !== 2">比較する</el-button>
           </template>
           <v-card>
             <compare-batter-score-table :checked-players="checkedPlayers"></compare-batter-score-table>
