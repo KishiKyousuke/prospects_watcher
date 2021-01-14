@@ -40,7 +40,7 @@
             <el-button v-bind="attrs" v-on="on" type="primary" size="small" round :disabled="checkedPlayers.length !== 2">比較する</el-button>
           </template>
           <v-card>
-            <compare-batter-score-table :checked-players="checkedPlayers" @close-modal="dialog = false"></compare-batter-score-table>
+            <compare-batter-score-table v-if="checkedPlayers.length === 2" :checked-players="checkedPlayers" @close-modal="dialog = false"></compare-batter-score-table>
           </v-card>
         </v-dialog>
         <el-button type="danger" round size="small" @click="releaseProcessing">解除する</el-button>
