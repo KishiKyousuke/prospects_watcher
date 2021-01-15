@@ -90,10 +90,6 @@ export default {
 </script>
 
 <style scoped>
-
-</style>
-
-<style lang="scss" scoped>
 /deep/ .el-table th>.cell {
   font-size: 1rem;
 }
