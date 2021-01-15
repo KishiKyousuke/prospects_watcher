@@ -53,6 +53,7 @@ export default {
 .v-tab {
   font-size: 1.4rem;
   font-weight: bold;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
 }
 
 h5 {

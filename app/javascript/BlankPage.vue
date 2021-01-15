@@ -32,5 +32,6 @@ export default {
 p {
   font-weight: bold;
   color: #6E6E6E;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
 }
 </style>

@@ -94,12 +94,13 @@ span{
   font-weight: bold;
   font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
   text-align: left;
-  margin-left: 24px;
+  margin-left: 24px
 }
 
 .v-tab {
   font-size: 1.3rem;
-  font-weight: bold
+  font-weight: bold;
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif
 }
 
 .central-tab {
