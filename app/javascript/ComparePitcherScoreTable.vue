@@ -130,7 +130,7 @@ table {
   width: 80%;
   margin: auto;
   border: 1px solid #dcdfe6;
-  border-collapse: collapse
+  border-collapse: collapse;
 }
 
 table th {

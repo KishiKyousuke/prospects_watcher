@@ -94,21 +94,21 @@ span{
   font-weight: bold;
   font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
   text-align: left;
-  margin-left: 24px
+  margin-left: 24px;
 }
 
 .v-tab {
   font-size: 1.3rem;
   font-weight: bold;
-  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif
+  font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
 }
 
 .central-tab {
-  color: #14A26F
+  color: #14A26F;
 }
 
 .pacific-tab {
-  color: #30A6CC
+  color: #30A6CC;
 }
 
 h5 {
