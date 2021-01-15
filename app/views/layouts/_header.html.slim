@@ -2,13 +2,13 @@ header
   nav.grey.darken-3 style="height: 72px;"
     .nav-wrapper
       .brand-logo
-        = link_to image_tag("/header_logo_white.png", size: '70x70'), registered_players_path
+        = link_to image_tag("/header_logo_white.png", size: '70x70'), registered_players_path, data: {"turbolinks" => false}
       ul.left.hide-on-med-and-down#nav-mobile style="margin-left: 80px; line-height: 72px;"
         - if user_signed_in?
           li style="color: black; display: block;"
             #js-player-search
           li
-            = link_to t('registered_players.index.link'), registered_players_path
+            = link_to t('registered_players.index.link'), registered_players_path, data: {"turbolinks" => false}
           li
             = link_to t('players.index.link'), players_path
         - else

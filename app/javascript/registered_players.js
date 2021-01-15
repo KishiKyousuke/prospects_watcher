@@ -6,7 +6,7 @@ import Vuetify from 'vuetify'
 
 Vue.use(VueGoodTablePlugin)
 
-document.addEventListener('turbolinks:load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const registeredPlayers = document.getElementById('js-registered-players')
   if (registeredPlayers) {
     new Vue({
