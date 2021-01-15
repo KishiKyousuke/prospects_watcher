@@ -1,11 +1,15 @@
 <template>
-  <div id="app">
-    <el-button type="danger" size="small" round @click="releaseProcessing" v-if="isRegistered">
-      解除
-    </el-button>
-    <el-button type="success" size="small" round @click="registerProcessing" v-else>
-      登録
-    </el-button>
+  <div id="app" class="pl-8">
+    <v-btn rounded dark small color="red" elevation="3" @click="releaseProcessing" v-if="isRegistered" :disabled="active">
+      <v-icon dark>
+        mdi-minus
+      </v-icon>
+    </v-btn>
+    <v-btn rounded dark small color="light-green" elevation="3" @click="registerProcessing" v-else :disabled="active">
+      <v-icon dark>
+        mdi-plus
+      </v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -15,7 +19,8 @@ import {axiosClient} from './axios_client'
 export default {
   data: function () {
     return {
-      isRegistered: false
+      isRegistered: false,
+      active: false
     }
   },
   props: {
@@ -39,10 +44,12 @@ export default {
     registerProcessing(){
       this.registerPlayer().then(() => {
         this.successNotice()
+        this.active = true
       }).catch(() => {
         this.duplicateErrorNotice()
       }).finally(() => {
         this.isRegistered = true
+        this.active = false
       })
     },
     registerPlayer: async function() {
@@ -94,5 +101,7 @@ export default {
 </script>
 
 <style scoped>
-
+.pl-8 {
+  padding-left: 8px;
+}
 </style>
