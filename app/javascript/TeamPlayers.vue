@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <div class="col s6">
-      <h5>野手</h5>
+  <v-row id="app">
+    <v-col cols="6">
+      <div class="center">
+        <h5>野手</h5>
+      </div>
       <el-table
           :data="teamBatters[0]"
           style="width: 100%"
@@ -23,9 +25,11 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
-    <div class="col s6">
-      <h5>投手</h5>
+    </v-col>
+    <v-col cols="6">
+      <div class="center">
+        <h5>投手</h5>
+      </div>
       <el-table
           :data="teamPitchers[0]"
           style="width: 100%">
@@ -46,8 +50,8 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
-  </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -90,10 +94,17 @@ export default {
 </script>
 
 <style scoped>
+h5 {
+  padding: 8px 0;
+  font-weight: bold;
+  font-family: Helvetica,Arial,'メイリオ','ヒラギノ W','Hiragino Sans','ヒラギノ角ゴシック','ＭＳ Ｐゴシック',sans-serif;;
+}
+
 /deep/ .el-table th>.cell {
   font-size: 1rem;
 }
 /deep/ .el-table td>.cell {
   font-size: 1.3rem;
+  padding: 4px 0;
 }
 </style>
