@@ -8,10 +8,12 @@
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <registered-batters :batters="registeredPlayers['batters']"></registered-batters>
+          <blank-page v-if="registeredPlayers['batters'].length === 0"></blank-page>
+          <registered-batters v-else :batters="registeredPlayers['batters']"></registered-batters>
         </v-tab-item>
         <v-tab-item>
-          <registered-pitchers :pitchers="registeredPlayers['pitchers']"></registered-pitchers>
+          <blank-page v-if="registeredPlayers['pitchers'].length === 0"></blank-page>
+          <registered-pitchers v-else :pitchers="registeredPlayers['pitchers']"></registered-pitchers>
         </v-tab-item>
       </v-tabs-items>
     </v-container>
@@ -21,6 +23,7 @@
 <script>
 import RegisteredBatters from './RegisteredBatters'
 import RegisteredPitchers from './RegisteredPitchers'
+import BlankPage from './BlankPage'
 import {axiosClient} from './axios_client'
 
 export default {
@@ -32,7 +35,8 @@ export default {
   },
   components: {
     RegisteredBatters,
-    RegisteredPitchers
+    RegisteredPitchers,
+    BlankPage
   },
   created() {
     this.fetchRegisteredPlayers()
