@@ -9,33 +9,8 @@ html
     = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
   body(style="display: flex; flex-direction: column; min-height: 100vh; font-family: Helvetica,Arial,'メイリオ','ヒラギノ W','Hiragino Sans','ヒラギノ角ゴシック','ＭＳ Ｐゴシック',sans-serif;")
-    header
-      nav.grey.darken-3 style="height: 72px;"
-        .nav-wrapper
-          .brand-logo
-            = link_to image_tag("/header_logo_white.png", size: '70x70'), registered_players_path
-          ul.left.hide-on-med-and-down#nav-mobile style="margin-left: 80px; line-height: 72px;"
-            - if user_signed_in?
-              li style="color: black; display: block;"
-                #js-player-search
-              li
-                = link_to t('registered_players.index.link'), registered_players_path
-              li
-                = link_to t('players.index.link'), players_path
-            - else
-              - if controller_name != 'sessions'
-                = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
-              - if devise_mapping.registerable? && controller_name != 'registrations'
-                = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
-          - if user_signed_in?
-            ul.right style="line-height: 72px;"
-              li
-                = link_to t('devise.registrations.edit.link'), edit_user_registration_path
-              li
-                = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
-    .notifications
-      - flash.each do |key, value|
-        = content_tag(:div, value, class: key)
+    = render 'layouts/header'
+    = render 'layouts/alert'
     .main(style="flex: 1 0 auto;")
       = yield
     footer.page-footer.grey.darken-3

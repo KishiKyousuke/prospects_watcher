@@ -1,2 +1,15 @@
 @import "materialize-css/dist/css/materialize.min.css";
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
+
+.notifications {
+    color: white;
+    text-align: center;
+}
+
+.notice {
+    background-color: #7AB93A;
+}
+
+.alert {
+    background-color: #F05459;
+}
