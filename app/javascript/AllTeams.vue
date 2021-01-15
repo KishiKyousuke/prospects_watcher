@@ -10,7 +10,7 @@
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-row>
-            <v-expansion-panels popout focusable>
+            <v-expansion-panels focusable>
               <v-expansion-panel v-for="team in teams['central']" :key="team['name']">
                 <v-expansion-panel-header>
                   <v-img :src="displayTeamLogo(team['english_team_name'])" max-width="64px"></v-img>
@@ -95,6 +95,11 @@ span{
   font-family: Helvetica,Arial,"メイリオ","ヒラギノ W3","Hiragino Sans","ヒラギノ角ゴシック","ＭＳ Ｐゴシック",sans-serif;
   text-align: left;
   margin-left: 24px;
+}
+
+.v-window {
+  margin: 24px 0;
+  overflow: initial;
 }
 
 .v-tab {
