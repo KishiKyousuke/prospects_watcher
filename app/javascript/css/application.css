@@ -22,3 +22,8 @@
 .nav-wrapper > ul > li > a > img {
     margin-top: 16px;
 }
+
+.devise-form {
+    width: 40%;
+    margin: auto;
+}
