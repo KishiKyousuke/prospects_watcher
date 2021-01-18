@@ -13,3 +13,12 @@
 .alert {
     background-color: #F05459;
 }
+
+.nav-wrapper > ul > li > a {
+    height: 72px;
+    font-size: 0.9rem;
+}
+
+.nav-wrapper > ul > li > a > img {
+    margin-top: 16px;
+}

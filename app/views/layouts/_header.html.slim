@@ -3,22 +3,36 @@ header
     .nav-wrapper
       .brand-logo
         = link_to image_tag("/header_logo_white.png", size: '70x70'), registered_players_path, data: {"turbolinks" => false}
-      ul.left.hide-on-med-and-down#nav-mobile style="margin-left: 80px; line-height: 72px;"
+      ul.left style="margin-left: 80px; line-height: 72px;"
         - if user_signed_in?
           li style="color: black; display: block;"
             #js-player-search
           li
-            = link_to t('registered_players.index.link'), registered_players_path, data: {"turbolinks" => false}
+            = link_to players_path
+              = image_tag('/icon_team_search.png', size: '35x35')
+              = t('players.index.link')
           li
-            = link_to t('players.index.link'), players_path
+            = link_to registered_players_path, data: {"turbolinks" => false}
+              = image_tag('/icon_check_circle.png', size: '35x35')
+              = t('registered_players.index.link')
         - else
           - if controller_name != 'sessions'
-            = link_to t('devise.sessions.new.sign_in'), new_session_path(resource_name)
+            li
+              = link_to new_session_path(resource_name)
+                = image_tag('/icon_login.png', size: '35x35')
+                = t('devise.sessions.new.sign_in')
           - if devise_mapping.registerable? && controller_name != 'registrations'
-            = link_to t('devise.registrations.new.sign_up'), new_registration_path(resource_name)
+            li
+              = link_to  new_registration_path(resource_name)
+                = image_tag('/icon_create_account.png', size: '35x35')
+                = t('devise.registrations.new.sign_up')
       - if user_signed_in?
-        ul.right style="line-height: 72px;"
+        ul.right
           li
-            = link_to t('devise.registrations.edit.link'), edit_user_registration_path
+            = link_to edit_user_registration_path
+              = image_tag('/icon_account-edit.png', size: '35x35')
+              = t('devise.registrations.edit.link')
           li
-            = link_to t('devise.sessions.destroy.sign_out'), destroy_user_session_path, method: :delete
+            = link_to destroy_user_session_path, method: :delete
+              = image_tag('/icon_logout.png', size: '35x35')
+              = t('devise.sessions.destroy.sign_out')

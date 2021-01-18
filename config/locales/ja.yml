@@ -39,7 +39,7 @@ ja:
         walks_and_hits_per_innings_pitched: WHIP
   players:
     index:
-      link: チームから探す
+      link: チームから選手を探す
   registered_players:
     index:
       link: 登録済み選手
