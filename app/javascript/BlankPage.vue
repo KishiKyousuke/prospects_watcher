@@ -1,5 +1,5 @@
 <template>
-  <v-container class="center">
+  <v-container class="center my-160">
     <v-btn
         dark
         large
@@ -25,8 +25,8 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  margin-top: 160px;
+.my-160 {
+  margin: 160px auto;
 }
 
 p {

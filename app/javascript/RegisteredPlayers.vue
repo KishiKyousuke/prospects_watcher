@@ -58,6 +58,11 @@ export default {
 </script>
 
 <style scoped>
+/deep/ .v-application--wrap {
+  min-height: initial;
+  min-height: auto;
+}
+
 .v-tab {
   font-size: 1.4rem;
   font-weight: bold;
