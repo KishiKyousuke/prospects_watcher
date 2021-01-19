@@ -12,7 +12,7 @@
               mode="select"
               :filter-by-query="true">
             <template slot="suggestion-item" slot-scope="{ suggestion }">
-              <span>{{ suggestion.name }}</span>
+              <span>{{ `${suggestion.number} ${suggestion.name}` }}</span>
             </template>
           </vue-simple-suggest>
         </v-col>
