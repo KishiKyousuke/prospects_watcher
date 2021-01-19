@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <v-snackbar v-model="snackbar">ログインしました</v-snackbar>
     <v-container :fluid="true" id="app">
       <h5 class="center">登録済み選手一覧</h5>
       <v-tabs v-model="tab" :grow="true">
@@ -30,7 +31,8 @@ export default {
   data: function () {
     return {
       registeredPlayers: {},
-      tab: null
+      tab: null,
+      snackbar: false
     }
   },
   components: {
@@ -40,6 +42,12 @@ export default {
   },
   created() {
     this.fetchRegisteredPlayers()
+  },
+  mounted() {
+    const paths = ['/users/sign_in', '/users/sign_up']
+    if (paths.find((path) => document.referrer.includes(path))) {
+      this.snackbar = true
+    }
   },
   methods: {
     fetchRegisteredPlayers() {

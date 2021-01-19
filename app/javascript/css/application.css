@@ -1,2 +1,29 @@
 @import "materialize-css/dist/css/materialize.min.css";
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
+
+.notifications {
+    color: white;
+    text-align: center;
+}
+
+.notice {
+    background-color: #7AB93A;
+}
+
+.alert {
+    background-color: #F05459;
+}
+
+.nav-wrapper > ul > li > a {
+    height: 72px;
+    font-size: 0.9rem;
+}
+
+.nav-wrapper > ul > li > a > img {
+    margin-top: 16px;
+}
+
+.devise-form {
+    width: 40%;
+    margin: auto;
+}
