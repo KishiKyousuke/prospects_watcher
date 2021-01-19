@@ -25,6 +25,7 @@
 import RegisteredBatters from './RegisteredBatters'
 import RegisteredPitchers from './RegisteredPitchers'
 import BlankPage from './BlankPage'
+import store from './store'
 import {axiosClient} from './axios_client'
 
 export default {
@@ -33,6 +34,17 @@ export default {
       registeredPlayers: {},
       tab: null,
       snackbar: false
+    }
+  },
+  computed: {
+    updateFlag() {
+      return store.state.updateFlag
+    }
+  },
+  watch: {
+    updateFlag() {
+      this.fetchRegisteredPlayers()
+      this.$forceUpdate()
     }
   },
   components: {
