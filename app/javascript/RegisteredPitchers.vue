@@ -137,6 +137,16 @@ export default {
           firstSortType: 'desc'
         },
         {
+          label: '四球',
+          field: 'base_on_balls',
+          type: 'number'
+        },
+        {
+          label: '死球',
+          field: 'hit_by_pitch',
+          type: 'number'
+        },
+        {
           label: 'K/BB',
           field: 'strikeout_to_walk_ratio',
           type: 'number',
