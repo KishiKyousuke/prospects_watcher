@@ -16,7 +16,7 @@ json.pitchers do
   json.array! @pitchers do |pitcher|
     json.extract! pitcher, :number, :url, :name, :earned_run_average, :win, :lose, :strikeout,
                   :innings_pitched, :pitched, :number_of_save, :hold_point, :strikeouts_per_nine_innings,
-                  :strikeout_to_walk_ratio, :walks_and_hits_per_innings_pitched
+                  :base_on_balls, :hit_by_pitch, :strikeout_to_walk_ratio, :walks_and_hits_per_innings_pitched
     json.pitcher_id pitcher.id
     json.team pitcher.team.name
     json.english_team_name pitcher.team.english_name
