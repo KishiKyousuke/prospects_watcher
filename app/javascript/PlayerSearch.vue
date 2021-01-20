@@ -39,6 +39,7 @@
 <script>
 import {axiosClient} from './axios_client'
 import VueSimpleSuggest from 'vue-simple-suggest'
+import store from './store.js'
 
 export default {
   data() {
@@ -77,6 +78,7 @@ export default {
     registerProcessing(){
       this.registerPlayer().then(() => {
         this.successNotice()
+        store.commit('changeFlag')
       }).catch(() => {
         this.duplicateErrorNotice()
       }).finally(() => {
