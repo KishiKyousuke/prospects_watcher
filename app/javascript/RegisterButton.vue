@@ -1,12 +1,12 @@
 <template>
   <div id="app" class="pl-8">
-    <v-btn rounded dark small color="red" elevation="3" @click="releaseProcessing" v-if="isRegistered" :disabled="active">
-      <v-icon dark>
+    <v-btn class="white--text" rounded small color="red" elevation="3" @click="releaseProcessing" v-if="isRegistered" :disabled="active">
+      <v-icon>
         mdi-minus
       </v-icon>
     </v-btn>
-    <v-btn rounded dark small color="light-green" elevation="3" @click="registerProcessing" v-else :disabled="active">
-      <v-icon dark>
+    <v-btn class="white--text" rounded small color="light-green" elevation="3" @click="registerProcessing" v-else :disabled="active">
+      <v-icon>
         mdi-plus
       </v-icon>
     </v-btn>
@@ -42,9 +42,9 @@ export default {
   },
   methods: {
     registerProcessing(){
+      this.active = true
       this.registerPlayer().then(() => {
         this.successNotice()
-        this.active = true
       }).catch(() => {
         this.duplicateErrorNotice()
       }).finally(() => {
@@ -70,9 +70,13 @@ export default {
       })
     },
     releaseProcessing() {
-      this.releasePlayer()
-      this.isRegistered = false
-      this.releaseNotice()
+      this.active = true
+      this.releasePlayer().then(() => {
+        this.releaseNotice()
+      }).finally(() => {
+        this.isRegistered = false
+        this.active = false
+      })
     },
     releasePlayer: async function() {
       await axiosClient.delete(`/api/v1/favorite_${this.playerType}`, {data: {player_id: this.selectedPlayerId}})
