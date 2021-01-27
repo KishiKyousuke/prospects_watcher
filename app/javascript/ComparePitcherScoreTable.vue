@@ -69,6 +69,24 @@
         </td>
       </tr>
       <tr>
+        <td :class="{ emphasis: isEmphasisInt(playerY['base_on_balls'], playerX['base_on_balls']) }">
+          {{playerX['base_on_balls']}}
+        </td>
+        <th>四球</th>
+        <td :class="{ emphasis: isEmphasisInt(playerX['base_on_balls'], playerY['base_on_balls']) }">
+          {{playerY['base_on_balls']}}
+        </td>
+      </tr>
+      <tr>
+        <td :class="{ emphasis: isEmphasisInt(playerY['hit_by_pitch'], playerX['hit_by_pitch']) }">
+          {{playerX['hit_by_pitch']}}
+        </td>
+        <th>死球</th>
+        <td :class="{ emphasis: isEmphasisInt(playerX['hit_by_pitch'], playerY['hit_by_pitch']) }">
+          {{playerY['hit_by_pitch']}}
+        </td>
+      </tr>
+      <tr>
         <td :class="{ emphasis: isEmphasisFloat(playerX['strikeout_to_walk_ratio'], playerY['strikeout_to_walk_ratio']) }">
           {{playerX['strikeout_to_walk_ratio']}}
         </td>
