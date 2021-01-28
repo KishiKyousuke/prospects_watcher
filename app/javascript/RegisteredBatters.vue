@@ -9,7 +9,7 @@
       :sort-options="{
         enabled: true,
         initialSortBy: [
-            {field: 'sort_flag', type: 'desc'},
+            {field: 'participation_flag', type: 'desc'},
             {field: 'at_bat', type: 'desc'}
         ]
       }"
@@ -161,7 +161,7 @@ export default {
           type: 'number'
         },
         {
-          field: 'sort_flag',
+          field: 'participation_flag',
           type: 'number',
           hidden: 'true'
         }
