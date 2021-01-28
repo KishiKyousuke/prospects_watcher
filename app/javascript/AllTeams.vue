@@ -17,7 +17,7 @@
                   <span>{{team['formal_name']}}</span>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
+                  <team-players :selected-team="team['name']" :same-league-teams="teams['central']" :registered-players="registeredPlayers"></team-players>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -32,7 +32,7 @@
                   <span>{{team['formal_name']}}</span>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <team-players v-if="showTeamPlayersComponent" :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
+                  <team-players :selected-team="team['name']" :same-league-teams="teams['pacific']" :registered-players="registeredPlayers"></team-players>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -50,21 +50,15 @@ import {axiosClient} from './axios_client'
 export default {
   data: function () {
     return {
-      teams: {},
+      teams: { central: [], pacific:[] },
       registeredPlayers: [],
-      showTeamPlayersComponent: false,
       tab: null,
       tabsSliderColor: '#14A26F'
     }
   },
   created() {
-    Promise.all([
-      this.fetchAllPlayers(),
+      this.fetchAllPlayers()
       this.fetchRegisteredPlayers()
-    ]).then(() => {
-      this.loading = false
-      this.showTeamPlayersComponent = true
-    })
   },
   components: {
     TeamPlayers
@@ -76,10 +70,10 @@ export default {
   },
   methods: {
     fetchRegisteredPlayers() {
-      return axiosClient.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
+      axiosClient.get('/api/v1/registered_players').then(response => this.registeredPlayers = response.data)
     },
     fetchAllPlayers() {
-      return axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
+      axiosClient.get('/api/v1/players').then(response => this.teams = response.data)
     },
     displayTeamLogo(team_name) {
       return `team_logo/${team_name}_logo.png`
