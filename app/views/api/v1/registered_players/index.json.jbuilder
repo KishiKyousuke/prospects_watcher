@@ -8,7 +8,7 @@ json.batters do
     json.batter_id batter.id
     json.team batter.team.name
     json.english_team_name batter.team.english_name
-    batter.plate_appearance == '-' ? json.sort_flag(0) : json.sort_flag(1)
+    batter.plate_appearance == '-' ? json.participation_flag(0) : json.participation_flag(1)
   end
 end
 
@@ -20,6 +20,6 @@ json.pitchers do
     json.pitcher_id pitcher.id
     json.team pitcher.team.name
     json.english_team_name pitcher.team.english_name
-    pitcher.pitched == '-' ? json.sort_flag(0) : json.sort_flag(1)
+    pitcher.pitched == '-' ? json.participation_flag(0) : json.participation_flag(1)
   end
 end
