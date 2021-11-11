@@ -6,8 +6,7 @@ Prospects Watcherは、複数のプロ野球選手の個人成績を確認する
 
 ## 選手の登録
 ### チーム一覧から選択する
-
-https://user-images.githubusercontent.com/59789739/141319972-ba409681-b011-40a5-ac0b-7b7d0349b7b5.mov
+https://user-images.githubusercontent.com/59789739/141323238-5c2594f9-a000-4793-ab75-74892160e1a3.mov
 
 ### 選手名で検索する
 
