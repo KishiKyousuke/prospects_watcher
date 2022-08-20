@@ -21,3 +21,9 @@ https://user-images.githubusercontent.com/59789739/141321312-f973959b-038e-45a5-
 
 https://user-images.githubusercontent.com/59789739/141321834-353f1568-46ee-40f3-945e-3df5e885928c.mov
 
+
+## アプリケーションの起動に必要な行程
+1. `docker compose build`を実行
+2. `docker compose up`を実行してアプリケーションを起動
+3. `docker compose web bash`でbashに接続し、`bin/rails db:seed`を実行
+4. bashに接続した状態で`bin/rails scrape:player_record`を実行
