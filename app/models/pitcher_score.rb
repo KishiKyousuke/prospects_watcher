@@ -4,7 +4,7 @@ class PitcherScore
   def initialize(scores, team_id)
     @number = scores[0]
     @url = scores[1]
-    @name = scores[2]
+    @name = scores[2].strip
     @team_id = team_id
     @earned_run_average = scores[3]
     @win = scores[9]
