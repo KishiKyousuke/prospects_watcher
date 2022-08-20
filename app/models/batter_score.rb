@@ -4,7 +4,7 @@ class BatterScore
   def initialize(scores, team_id)
     @number = scores[0]
     @url = scores[1]
-    @name = scores[2]
+    @name = scores[2].strip
     @team_id = team_id
     @batting_average = scores[3]
     @plate_appearance = scores[5]

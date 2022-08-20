@@ -20,7 +20,7 @@ Team.create!(
     },
     {
       name: '西武',
-      formal_name: '埼玉西部ライオンズ',
+      formal_name: '埼玉西武ライオンズ',
       ranking: 3,
       league: :pacific,
       url_id: 7,
