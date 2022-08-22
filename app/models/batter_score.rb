@@ -42,5 +42,6 @@ class BatterScore
                   scoring_position_batting_average: @scoring_position_batting_average,
                   strikeout: @strikeout,
                   error: @error)
+    batter.touch
   end
 end

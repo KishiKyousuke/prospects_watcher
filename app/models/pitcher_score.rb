@@ -40,5 +40,6 @@ class PitcherScore
                     hit_by_pitch: @hit_by_pitch,
                     strikeout_to_walk_ratio: @strikeout_to_walk_ratio,
                     walks_and_hits_per_innings_pitched: @walks_and_hits_per_innings_pitched)
+    pitcher.touch
   end
 end
