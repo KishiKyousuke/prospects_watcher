@@ -17,5 +17,5 @@ Rails.application.routes.draw do
   end
   resources :registered_players, only: :index
   root 'registered_players#index'
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 end
