@@ -24,8 +24,8 @@ class PlayersDataFormatter
   private
   def sort_by_number(players)
     players.sort_by do |player|
-      if player.number.size == 3 && player.number[0] == "0"
-        player.number.sub("0", "1").to_i
+      if player.number.size == 3 && player.number[0] == '0'
+        player.number.sub('0', '1').to_i
       else
         player.number.to_i
       end

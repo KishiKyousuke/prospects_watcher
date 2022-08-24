@@ -15,10 +15,10 @@ task delete_retired_player_record: :environment do
   if new_season_player_record.present?
     retired_batters.destroy_all
     retired_pitchers.destroy_all
-    puts "引退・移籍選手のデータ削除が完了しました"
+    puts '引退・移籍選手のデータ削除が完了しました'
   end
 
 rescue ActiveRecord::RecordNotFound => e
   puts e
-  puts "Yahooのデータが新シーズンのものに更新されていないためタスクを中止します"
+  puts 'Yahooのデータが新シーズンのものに更新されていないためタスクを中止します'
 end
