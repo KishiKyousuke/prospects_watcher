@@ -3,9 +3,12 @@ services:
   db:
     image: postgres
     environment:
-      - POSTGRES_PASSWORD=password
+      POSTGRES_USER: prospects_watcher
+      POSTGRES_PASSWORD: password
     volumes:
       - "db-data:/var/lib/postgresql/data"
+    ports:
+      - '5433:5432'
   web: &app_base
     build: .
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
