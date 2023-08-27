@@ -19,13 +19,14 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    environment:
+      - "SELENIUM_DRIVER_URL=http://selenium_chrome:4444/wd/hub"
   webpacker:
     build: .
     environment:
       NODE_ENV: development
       RAILS_ENV: development
       WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
-      SELENIUM_DRIVER_URL: http://selenium_chrome:4444/wd/hub
 
     command: "bin/webpack-dev-server"
     ports:
