@@ -86,6 +86,8 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
     erubi (1.12.0)
+    factory_bot (6.3.0)
+      activesupport (>= 5.0.0)
     ffi (1.13.1)
     foreman (0.87.2)
     globalid (1.1.0)
@@ -304,6 +306,7 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   devise
+  factory_bot
   foreman
   html2slim
   jbuilder (~> 2.7)
