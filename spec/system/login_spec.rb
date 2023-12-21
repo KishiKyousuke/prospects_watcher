@@ -26,10 +26,20 @@ RSpec.describe 'ログインページ', type: :system do
       fill_in 'Eメール', with: 'tanaka@example.com'
       fill_in 'パスワード', with: 'password'
       click_on 'ログイン'
-      save_screenshot 'hoge.png'
     end
   end
 
   describe :log_out do
+    let!(:user) { create(:user, email: 'tanaka@example.com', confirmed_at: Time.zone.now) }
+
+    before do
+      sign_in user
+      visit root_path
+    end
+
+    it 'ログアウトが行えること' do
+      click_on 'ログアウト'
+      expect(page).to have_content 'アカウント登録もしくはログインしてください。'
+    end
   end
 end
