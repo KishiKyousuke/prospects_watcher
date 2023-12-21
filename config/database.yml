@@ -21,8 +21,8 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   user: prospects_watcher
-  password: password
-  host: db
+  password: <%= ENV['POSTGRES_USER'] || '' %>
+  host: <%= ENV['POSTGRES_HOST'] || 'localhost' %>
 
 development:
   <<: *default
