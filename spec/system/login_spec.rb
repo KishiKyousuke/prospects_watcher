@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'ログインページ', type: :system do
@@ -17,9 +19,14 @@ RSpec.describe 'ログインページ', type: :system do
   end
 
   describe :login do
+    let!(:user) { create(:user, email: 'tanaka@example.com', confirmed_at: Time.zone.now) }
     before { visit new_user_session_path }
 
     it 'ログインが行えること' do
+      fill_in 'Eメール', with: 'tanaka@example.com'
+      fill_in 'パスワード', with: 'password'
+      click_on 'ログイン'
+      save_screenshot 'hoge.png'
     end
   end
 
