@@ -5,7 +5,7 @@ Team.create!(
     {
       name: 'ソフトバンク',
       formal_name: '福岡ソフトバンクホークス',
-      ranking: 1,
+      ranking: 3,
       league: :pacific,
       url_id: 12,
       english_name: 'hawks'
@@ -21,7 +21,7 @@ Team.create!(
     {
       name: '西武',
       formal_name: '埼玉西武ライオンズ',
-      ranking: 3,
+      ranking: 5,
       league: :pacific,
       url_id: 7,
       english_name: 'lions'
@@ -37,7 +37,7 @@ Team.create!(
     {
       name: '日本ハム',
       formal_name: '北海道日本ハムファイターズ',
-      ranking: 5,
+      ranking: 6,
       league: :pacific,
       url_id: 8,
       english_name: 'fighters'
@@ -45,7 +45,7 @@ Team.create!(
     {
       name: 'オリックス',
       formal_name: 'オリックス・バファローズ',
-      ranking: 6,
+      ranking: 1,
       league: :pacific,
       url_id: 11,
       english_name: 'buffaloes'
@@ -53,7 +53,7 @@ Team.create!(
     {
       name: '巨人',
       formal_name: '読売ジャイアンツ',
-      ranking: 1,
+      ranking: 4,
       league: :central,
       url_id: 1,
       english_name: 'giants'
@@ -61,7 +61,7 @@ Team.create!(
     {
       name: '阪神',
       formal_name: '阪神タイガース',
-      ranking: 2,
+      ranking: 1,
       league: :central,
       url_id: 5,
       english_name: 'tigers'
@@ -69,7 +69,7 @@ Team.create!(
     {
       name: '中日',
       formal_name: '中日ドラゴンズ',
-      ranking: 3,
+      ranking: 6,
       league: :central,
       url_id: 4,
       english_name: 'dragons'
@@ -77,7 +77,7 @@ Team.create!(
     {
       name: 'DeNA',
       formal_name: '横浜DeNAベイスターズ',
-      ranking: 4,
+      ranking: 3,
       league: :central,
       url_id: 3,
       english_name: 'baystars'
@@ -85,7 +85,7 @@ Team.create!(
     {
       name: '広島',
       formal_name: '広島東洋カープ',
-      ranking: 5,
+      ranking: 2,
       league: :central,
       url_id: 6,
       english_name: 'carp'
@@ -93,7 +93,7 @@ Team.create!(
     {
       name: 'ヤクルト',
       formal_name: '東京ヤクルトスワローズ',
-      ranking: 6,
+      ranking: 5,
       league: :central,
       url_id: 2,
       english_name: 'swallows'
