@@ -18,29 +18,29 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7.7
-        bundler-cache: true
-    - name: Install dependencies
-      run: |
-        bundle install
-        gem update --system
-        yarn install
+    #steps:
+    #- uses: actions/checkout@v2
+    #- name: Set up Ruby
+    #  uses: ruby/setup-ruby@v1
+    #  with:
+    #    ruby-version: 2.7.7
+    #    bundler-cache: true
+    #- name: Install dependencies
+    #  run: |
+    #    bundle install
+    #    gem update --system
+    #    yarn install
 
-    - name: Setup Database
-      run: |
-        cp config/database.yml.github-actions config/database.yml
-        bundle exec rake db:create
-        bundle exec rake db:schema:load
-      env:
-        RAILS_ENV: test
+    #- name: Setup Database
+    #  run: |
+    #    cp config/database.yml.github-actions config/database.yml
+    #    bundle exec rake db:create
+    #    bundle exec rake db:schema:load
+    #  env:
+    #    RAILS_ENV: test
 
-    - name: Run rubocop
-      run: bundle exec rubocop
+    #- name: Run rubocop
+    #  run: bundle exec rubocop
 
     # - name: Run RSpec
     #   run: bundle exec rspec

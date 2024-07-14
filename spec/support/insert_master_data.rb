@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-Team.create!(
-  [
+module InsertMasterData
+  TEAM_DATA = [
     {
       name: 'ソフトバンク',
       formal_name: '福岡ソフトバンクホークス',
@@ -99,4 +99,10 @@ Team.create!(
       english_name: 'swallows'
     }
   ]
-)
+
+  def self.insert_team_data
+    TEAM_DATA.each do |team_data|
+      FactoryBot.create(:team, team_data)
+    end
+  end
+end
