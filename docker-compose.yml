@@ -5,6 +5,7 @@ services:
     environment:
       POSTGRES_USER: prospects_watcher
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: prospects_watcher_development
     volumes:
       - "db-data:/var/lib/postgresql/data"
     ports:

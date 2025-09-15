@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ruby:2.7.7
+FROM --platform=linux/amd64 ruby:3.0.6
 ENV LANG C.UTF-8
 
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
