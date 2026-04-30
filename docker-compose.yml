@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: postgres:17
     environment:
       POSTGRES_USER: prospects_watcher
       POSTGRES_PASSWORD: password

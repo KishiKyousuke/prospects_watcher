@@ -19,5 +19,7 @@ RUN mkdir /prospects_watcher
 WORKDIR /prospects_watcher
 ADD Gemfile /prospects_watcher/Gemfile
 ADD Gemfile.lock /prospects_watcher/Gemfile.lock
+RUN gem install bundler:2.5.15
+RUN bundle config set force_ruby_platform true
 RUN bundle install
 ADD . /prospects_watcher
