@@ -114,6 +114,8 @@ RSpec.describe '登録済み選手一覧', type: :system do
     context '登録済みの選手が存在する場合' do
       include_context '選手登録済み'
 
+      before { visit registered_players_path }
+
       it '登録済みの野手が表示されること' do
         expect(page).to have_content '前田 智徳'
         expect(page).to have_content '新井 貴浩'
