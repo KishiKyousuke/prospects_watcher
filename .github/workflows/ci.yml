@@ -15,6 +15,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          rubygems: latest
           bundler-cache: true
 
       - name: Run RuboCop
@@ -51,6 +52,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          rubygems: latest
           bundler-cache: true
 
       - name: Set up Node
