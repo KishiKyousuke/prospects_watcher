@@ -114,6 +114,8 @@ RSpec.describe '登録済み選手一覧', type: :system do
     context '登録済みの選手が存在する場合' do
       include_context '選手登録済み'
 
+      before { visit registered_players_path }
+
       it '登録済みの野手が表示されること' do
         expect(page).to have_content '前田 智徳'
         expect(page).to have_content '新井 貴浩'
@@ -200,7 +202,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       end
 
       context '防御率のボタンをクリックした場合' do
-        before { click_on '防御率' }
+        before { find('th', text: '防御率').find('button').click }
 
         it '防御率の昇順で並び替えられること' do
           expect(page).to have_selector 'tbody tr:nth-child(1)', text: '黒田 博樹'
@@ -209,7 +211,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
         end
 
         context '防御率のボタンをもう一度クリックした場合' do
-          before { click_on '防御率' }
+          before { find('th', text: '防御率').find('button').click }
 
           it '防御率の降順で並び替えられること' do
             expect(page).to have_selector 'tbody tr:nth-child(1)', text: '野村 祐輔'
