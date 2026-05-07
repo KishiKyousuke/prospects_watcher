@@ -211,7 +211,10 @@ RSpec.describe '登録済み選手一覧', type: :system do
         end
 
         context '防御率のボタンをもう一度クリックした場合' do
-          before { find('th', text: '防御率').find('button').click }
+          before do
+            expect(page).to have_selector 'tbody tr:nth-child(1)', text: '黒田 博樹'
+            find('th', text: '防御率').find('button').click
+          end
 
           it '防御率の降順で並び替えられること' do
             expect(page).to have_selector 'tbody tr:nth-child(1)', text: '野村 祐輔'
@@ -222,7 +225,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       end
 
       context '勝のボタンをクリックした場合' do
-        before { click_on '勝' }
+        before { find('th', text: '勝').find('button').click }
 
         it '勝利数の降順で並び替えられること' do
           expect(page).to have_selector 'tbody tr:nth-child(1)', text: '野村 祐輔'
@@ -334,6 +337,38 @@ RSpec.describe '登録済み選手一覧', type: :system do
 
           it '選手の比較モーダルが閉じること' do
             expect(page).to_not have_selector '.v-card.v-sheet.theme--light'
+          end
+        end
+      end
+    end
+
+    context '投手タブでチェックボックスを2つチェックした時' do
+      before do
+        visit registered_players_path
+        find('div.v-tab', text: '投手').click
+        expect(page).to have_selector 'tbody tr', text: '黒田 博樹'
+        expect(page).to have_selector 'tbody tr', text: '野村 祐輔'
+        find('tbody tr', text: '黒田 博樹').find('input[type="checkbox"]').set(true)
+        find('tbody tr', text: '野村 祐輔').find('input[type="checkbox"]').set(true)
+        expect(page).to have_button '比較する', disabled: false
+      end
+
+      context '比較するボタンをクリックした時' do
+        before { click_on '比較する' }
+
+        it '投手の比較モーダルが開き、優れている指標が強調されること' do
+          within('.v-card.v-sheet.theme--light') do
+            expect(page).to have_content '黒田 博樹'
+            expect(page).to have_content '野村 祐輔'
+            # 防御率は値が小さい方が優れる
+            expect(find('tr td.emphasis', text: '1.85'))
+            expect(find('tr td', text: '2.71'))
+            # 勝利数は値が大きい方が優れる
+            expect(find('tr td.emphasis', text: '16'))
+            expect(find('tr td', text: '13'))
+            # 奪三振は値が大きい方が優れる
+            expect(find('tr td.emphasis', text: '144'))
+            expect(find('tr td', text: '91'))
           end
         end
       end

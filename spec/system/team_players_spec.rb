@@ -83,6 +83,14 @@ RSpec.describe '選手一覧画面', type: :system do
       expect(page).to have_content '選手を登録しました'
     end
 
+    it '+ボタンで登録した選手が登録済み選手一覧画面に表示されること' do
+      click_on '広島東洋カープ'
+      first('button.light-green').click
+      expect(page).to have_content '選手を登録しました'
+      visit registered_players_path
+      expect(page).to have_content '田村 俊介'
+    end
+
     context '登録済みの選手の場合' do
       before do
         FavoriteBatter.create!(user: user, batter: batter)
