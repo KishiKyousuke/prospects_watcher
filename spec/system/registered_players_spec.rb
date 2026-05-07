@@ -211,7 +211,10 @@ RSpec.describe '登録済み選手一覧', type: :system do
         end
 
         context '防御率のボタンをもう一度クリックした場合' do
-          before { find('th', text: '防御率').find('button').click }
+          before do
+            expect(page).to have_selector 'tbody tr:nth-child(1)', text: '黒田 博樹'
+            find('th', text: '防御率').find('button').click
+          end
 
           it '防御率の降順で並び替えられること' do
             expect(page).to have_selector 'tbody tr:nth-child(1)', text: '野村 祐輔'
@@ -222,7 +225,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       end
 
       context '勝のボタンをクリックした場合' do
-        before { click_on '勝' }
+        before { find('th', text: '勝').find('button').click }
 
         it '勝利数の降順で並び替えられること' do
           expect(page).to have_selector 'tbody tr:nth-child(1)', text: '野村 祐輔'
@@ -347,6 +350,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
         expect(page).to have_selector 'tbody tr', text: '野村 祐輔'
         find('tbody tr', text: '黒田 博樹').find('input[type="checkbox"]').set(true)
         find('tbody tr', text: '野村 祐輔').find('input[type="checkbox"]').set(true)
+        expect(page).to have_button '比較する', disabled: false
       end
 
       context '比較するボタンをクリックした時' do
