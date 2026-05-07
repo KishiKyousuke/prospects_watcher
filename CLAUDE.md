@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 進行中の長期計画
+
+Rails アップグレード（6.0 → 8.0）と Vue → React 移行を段階的に進行中。
+詳細・現在のフェーズは [`docs/rails_react_migration_plan.md`](docs/rails_react_migration_plan.md) を参照。
+このアップグレード関連の作業に着手する前に必ず該当ドキュメントを読むこと。
+
 ## Commands
 
 ```bash
