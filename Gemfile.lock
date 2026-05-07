@@ -99,9 +99,6 @@ GEM
     ffi (1.17.4-x86_64-linux-gnu)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    hpricot (0.8.6)
-    html2slim (0.2.0)
-      hpricot
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     jbuilder (2.12.0)
@@ -324,6 +321,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  arm64-darwin-24
   x86_64-linux
   x86_64-linux-gnu
 
@@ -334,7 +332,6 @@ DEPENDENCIES
   devise
   factory_bot_rails
   faker
-  html2slim
   jbuilder (~> 2.7)
   letter_opener_web
   listen (~> 3.2)
@@ -362,7 +359,7 @@ DEPENDENCIES
   webpacker (~> 4.0)
 
 RUBY VERSION
-   ruby 3.0.6p216
+   ruby 3.2.11p268
 
 BUNDLED WITH
    2.5.15
