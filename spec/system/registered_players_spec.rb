@@ -193,6 +193,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       before do
         visit registered_players_path
         find('div.v-tab', text: '投手').click
+        expect(page).to have_content '黒田 博樹'
       end
 
       it 'デフォルトでは投球回の降順で並んでいること' do
@@ -242,6 +243,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
     context 'チェックボックスを1つチェックした時' do
       before do
         visit registered_players_path
+        expect(page).to have_content '栗原 健太'
         first('tbody tr th input[type="checkbox"]').set(true)
       end
 
@@ -264,6 +266,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
     context '最上部のチェックボックスをクリックした時' do
       before do
         visit registered_players_path
+        expect(page).to have_content '栗原 健太'
         first('thead tr th input[type="checkbox"]').set(true)
       end
 
@@ -304,6 +307,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
     context 'チェックボックスを2つチェックした時' do
       before do
         visit registered_players_path
+        expect(page).to have_content '栗原 健太'
         first('tbody tr th input[type="checkbox"]').set(true)
         all('tbody tr th input[type="checkbox"]').last.set(true)
       end

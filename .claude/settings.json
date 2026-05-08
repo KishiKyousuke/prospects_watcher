@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; bundle exec rubocop -a \"$f\"; } 2>/dev/null || true",
+            "statusMessage": "RuboCop自動修正中..."
+          }
+        ]
+      }
+    ]
+  }
+}

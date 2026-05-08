@@ -78,6 +78,7 @@ RSpec.describe '選手一覧画面', type: :system do
 
     it '+ボタンを押すと選手が登録されること' do
       click_on '広島東洋カープ'
+      expect(page).to have_content '田村 俊介'
       first('button.light-green').click
       expect(page).to have_content '登録完了'
       expect(page).to have_content '選手を登録しました'
@@ -85,6 +86,7 @@ RSpec.describe '選手一覧画面', type: :system do
 
     it '+ボタンで登録した選手が登録済み選手一覧画面に表示されること' do
       click_on '広島東洋カープ'
+      expect(page).to have_content '田村 俊介'
       first('button.light-green').click
       expect(page).to have_content '選手を登録しました'
       visit registered_players_path
@@ -99,6 +101,7 @@ RSpec.describe '選手一覧画面', type: :system do
 
       it '-ボタンを押すと選手が登録解除されること' do
         click_on '広島東洋カープ'
+        expect(page).to have_content '田村 俊介'
         first('button.red').click
         expect(page).to have_content '登録解除'
         expect(page).to have_content '選手を登録から解除しました'
