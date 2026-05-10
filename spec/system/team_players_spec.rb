@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe '選手一覧画面', type: :system do
@@ -49,7 +47,7 @@ RSpec.describe '選手一覧画面', type: :system do
       create(
         :batter,
         name: '田村 俊介',
-        team: team,
+        team:,
         number: '60'
       )
     end
@@ -57,7 +55,7 @@ RSpec.describe '選手一覧画面', type: :system do
       create(
         :pitcher,
         name: '斉藤 優汰',
-        team: team,
+        team:,
         number: '47'
       )
     end
@@ -95,7 +93,7 @@ RSpec.describe '選手一覧画面', type: :system do
 
     context '登録済みの選手の場合' do
       before do
-        FavoriteBatter.create!(user: user, batter: batter)
+        FavoriteBatter.create!(user:, batter:)
         visit players_path
       end
 

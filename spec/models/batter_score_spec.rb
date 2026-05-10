@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe BatterScore, type: :model do
@@ -136,7 +134,7 @@ RSpec.describe BatterScore, type: :model do
 
     context '該当URLのBatterが既に存在する場合' do
       let!(:existing_batter) do
-        create(:batter, url: 'https://baseball.yahoo.co.jp/npb/player/1234/top', team: team, name: '旧名前', home_run: '0')
+        create(:batter, url: 'https://baseball.yahoo.co.jp/npb/player/1234/top', team:, name: '旧名前', home_run: '0')
       end
 
       it 'レコードを新規作成せず既存レコードを更新する' do

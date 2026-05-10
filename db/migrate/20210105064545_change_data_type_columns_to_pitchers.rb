@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ChangeDataTypeColumnsToPitchers < ActiveRecord::Migration[6.0]
   def up
     change_column :pitchers, :earned_run_average, :string

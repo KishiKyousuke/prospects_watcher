@@ -45,6 +45,7 @@ jobs:
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      DISABLE_SPRING: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -66,6 +67,9 @@ jobs:
 
       - name: Set up database
         run: bin/rails db:create db:schema:load
+
+      - name: Compile webpack assets
+        run: bundle exec rails webpacker:compile
 
       - name: Run RSpec
         run: bundle exec rspec

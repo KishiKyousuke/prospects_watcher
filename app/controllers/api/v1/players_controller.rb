@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Api::V1::PlayersController < ActionController::API
   def index
     teams = Team.order(:ranking)

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 namespace :scrape do
   desc '選手成績を取得'
   task player_record: :environment do

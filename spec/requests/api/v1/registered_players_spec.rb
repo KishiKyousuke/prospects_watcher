@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe 'GET /api/v1/registered_players', type: :request do
@@ -32,10 +30,10 @@ RSpec.describe 'GET /api/v1/registered_players', type: :request do
       end
 
       context 'お気に入り選手が存在する場合' do
-        let!(:batter) { create(:batter, team: team) }
-        let!(:pitcher) { create(:pitcher, team: team) }
-        let!(:favorite_batter) { create(:favorite_batter, user: user, batter: batter) }
-        let!(:favorite_pitcher) { create(:favorite_pitcher, user: user, pitcher: pitcher) }
+        let!(:batter) { create(:batter, team:) }
+        let!(:pitcher) { create(:pitcher, team:) }
+        let!(:favorite_batter) { create(:favorite_batter, user:, batter:) }
+        let!(:favorite_pitcher) { create(:favorite_pitcher, user:, pitcher:) }
 
         before { get '/api/v1/registered_players' }
 
@@ -59,7 +57,7 @@ RSpec.describe 'GET /api/v1/registered_players', type: :request do
 
         it '他ユーザーのお気に入りは含まれない' do
           other_user = create(:user, email: 'other@example.com', confirmed_at: Time.current)
-          other_batter = create(:batter, team: team, url: 'https://example.com/other', name: '他の選手')
+          other_batter = create(:batter, team:, url: 'https://example.com/other', name: '他の選手')
           create(:favorite_batter, user: other_user, batter: other_batter)
 
           batter_names = response.parsed_body['batters'].map { |b| b['name'] }

@@ -1,8 +1,7 @@
-# frozen_string_literal: true
-
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
 require 'bundler/setup' # Set up gems listed in the Gemfile.
+require 'logger' # Rails 6.1 + Ruby 3.2: Logger は stdlib gem 化されたため明示 require が必要
 
 # webpacker 4.x の内部 YAML が alias を使っており Psych 4.0+ (Ruby 3.1+) で失敗するため暫定対処。
 # bootsnap が YAML.load_file を上書きするため YAML compile cache を無効にし、

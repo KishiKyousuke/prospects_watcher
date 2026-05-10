@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 desc 'NPBから引退・移籍した選手を削除する'
 task delete_retired_player_record: :environment do
   # 更新が昨年時点で止まっている選手をDBから取り除く

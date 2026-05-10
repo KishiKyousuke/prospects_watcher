@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PitcherScore
   def initialize(scores, team_id)
     @number = scores[0]
