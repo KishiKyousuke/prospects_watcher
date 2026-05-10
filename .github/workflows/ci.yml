@@ -67,5 +67,8 @@ jobs:
       - name: Set up database
         run: bin/rails db:create db:schema:load
 
+      - name: Compile webpack assets
+        run: bundle exec rails webpacker:compile
+
       - name: Run RSpec
         run: bundle exec rspec
