@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ScoreScraper, type: :model do
   let(:url) { 'https://baseball.yahoo.co.jp/npb/teams/6/memberlist' }
   let(:charset) { 'utf-8' }
-  let(:mock_file) { double('http_response', charset: charset, read: html_content) }
+  let(:mock_file) { double('http_response', charset:, read: html_content) }
 
   before do
     allow(URI).to receive(:open).with(url).and_yield(mock_file)

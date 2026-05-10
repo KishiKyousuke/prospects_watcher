@@ -15,7 +15,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       create(
         :batter,
         name: '前田 智徳',
-        team: team,
+        team:,
         number: '1',
         at_bat: '504',
         batting_average: '.335',
@@ -27,7 +27,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       create(
         :batter,
         name: '新井 貴浩',
-        team: team,
+        team:,
         number: '25',
         at_bat: '541',
         batting_average: '.305',
@@ -39,7 +39,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       create(
         :batter,
         name: '栗原 健太',
-        team: team,
+        team:,
         number: '5',
         at_bat: '557',
         batting_average: '.332',
@@ -52,7 +52,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       create(
         :pitcher,
         name: '黒田 博樹',
-        team: team,
+        team:,
         number: '15',
         innings_pitched: '189.1',
         earned_run_average: '1.85',
@@ -64,7 +64,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
       create(
         :pitcher,
         name: 'ルイス',
-        team: team,
+        team:,
         number: '11',
         innings_pitched: '178',
         earned_run_average: '2.68',
@@ -77,7 +77,7 @@ RSpec.describe '登録済み選手一覧', type: :system do
         :pitcher,
         name: '野村 祐輔',
         number: '19',
-        team: team,
+        team:,
         innings_pitched: '152.2',
         earned_run_average: '2.71',
         win: '16',

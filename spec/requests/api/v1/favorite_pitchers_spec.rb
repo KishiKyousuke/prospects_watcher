@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::FavoritePitchers', type: :request do
   let(:team) { create(:team) }
   let(:user) { create(:user, confirmed_at: Time.current) }
-  let!(:pitcher) { create(:pitcher, team: team) }
+  let!(:pitcher) { create(:pitcher, team:) }
 
   describe 'POST /api/v1/favorite_pitchers' do
     context '認証済みユーザーの場合' do
@@ -39,7 +39,7 @@ RSpec.describe 'Api::V1::FavoritePitchers', type: :request do
     context '認証済みユーザーの場合' do
       before do
         sign_in user
-        create(:favorite_pitcher, user: user, pitcher: pitcher)
+        create(:favorite_pitcher, user:, pitcher:)
       end
 
       it 'favorite_pitcherを削除する' do
@@ -50,7 +50,7 @@ RSpec.describe 'Api::V1::FavoritePitchers', type: :request do
     end
 
     context '未認証の場合' do
-      before { create(:favorite_pitcher, user: user, pitcher: pitcher) }
+      before { create(:favorite_pitcher, user:, pitcher:) }
 
       it '401を返す' do
         delete '/api/v1/favorite_pitchers', params: { player_id: pitcher.id }

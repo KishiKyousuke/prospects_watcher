@@ -19,8 +19,8 @@ RSpec.describe 'GET /api/v1/players', type: :request do
 
     context '選手データが存在する場合' do
       before do
-        create(:batter, team: team, number: '1')
-        create(:pitcher, team: team, number: '18')
+        create(:batter, team:, number: '1')
+        create(:pitcher, team:, number: '18')
         get '/api/v1/players'
       end
 
