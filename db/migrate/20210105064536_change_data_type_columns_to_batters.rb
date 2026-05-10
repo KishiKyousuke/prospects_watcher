@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ChangeDataTypeColumnsToBatters < ActiveRecord::Migration[6.0]
   def up
     change_column :batters, :home_run, :string

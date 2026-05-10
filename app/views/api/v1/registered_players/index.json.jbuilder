@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 json.batters do
   json.array! @batters do |batter|
     json.extract! batter, :number, :url, :name, :batting_average, :at_bat,
