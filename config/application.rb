@@ -21,5 +21,7 @@ module ProspectsWatcher
     end
     config.i18n.default_locale = :ja
     config.time_zone = 'Asia/Tokyo'
+    config.active_support.cache_format_version = 7.0
+    config.active_support.disable_to_s_conversion = true
   end
 end
