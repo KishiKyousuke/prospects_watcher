@@ -16,8 +16,8 @@ Claude Code は新規セッションでこのファイルを読み、現在の�
 - [x] Phase 0 — テスト強化（システムテスト・ユニットテスト整備済み）
 - [x] Phase 1 — Ruby 3.0.6 → 3.2.11
 - [x] Phase 2 — Rails 6.0 → 6.1
-- [ ] Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）← **次の着手ポイント**
-- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行
+- [x] Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）
+- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行 ← **次の着手ポイント**
 - [ ] Phase 5 — Rails 7.0 → 7.1 → 7.2 → 8.0
 
 着手・完了したフェーズはチェックを更新すること。
@@ -51,12 +51,17 @@ Claude Code は新規セッションでこのファイルを読み、現在の�
 - ActiveStorage マイグレーション 2件を適用（service_name カラム追加 / variant records テーブル作成）
 - 142件のテストが全てパス（PR #127）
 
-### Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）
+### Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）✅
 
 - フロントエンド環境には**手を入れない**。Webpacker gem は7.0でも動作する（deprecation警告は出る）
-- `rails app:update` 適用、`load_defaults 7.0` を段階的に
-- credentials の multi-environment 化を整理
-- ActiveRecord の暗号化、非同期クエリなどの新機能は必要に応じて
+- `rails app:update` 適用、`load_defaults 7.0` に更新（PR #128）
+- `config/initializers/new_framework_defaults_7_0.rb` の全フラグを有効化した上で削除
+- `urlsafe_csrf_tokens` を有効化（6.1 defaults の保留フラグを解消）
+- ActiveStorage の checksum NOT NULL 制約削除マイグレーションを適用
+- `key_generator_hash_digest_class` / `hash_digest_class` を SHA256 に変更
+- `cookies_serializer = :json`、`cache_format_version = 7.0`、`disable_to_s_conversion = true` を有効化
+- devise の `skip_after_callbacks_if_terminated=` deprecation は devise gem 側の問題。Rails 7.1 移行前に devise アップデートで解消予定
+- 142件のテストが全てパス（PR #128）
 
 ### Phase 4 — Webpacker脱却 + Vue → React 移行（本丸）
 
