@@ -340,6 +340,26 @@ import '../registered_players'
 
    `vite.config.mts` から `resolve.dedupe: ['vue']` は（効果がないため）削除してよい。`define` の `process.env.NODE_ENV` は無害な追加ハードニングとして残す。
 
+7. **（element-ui削除後も残った本丸）Vuetify自体が同一クラスの問題を抱えていた。** `node_modules/vuetify/dist/vuetify.js`（`package.json` の `main`/`module` 両方がこのファイルを指す）は `module.exports = factory(require("vue"))` という webpack UMD形式で、element-uiと全く同じ構造。Vuetifyはアプリ全体で使われる中核UIフレームワークであり「削除」という選択肢はない。
+
+   **対応方針: `vuetify` を `vuetify/lib`（コンポーネントごとの生ソースツリー、真のESM形式）へ別名解決（alias）する。** Vuetifyを手放す必要はなく、同一パッケージ内の別のビルド形式に向き先を変えるだけ。`vuetify/lib/framework.js` は `export default class Vuetify` を持ち、`Vue.use(Vuetify)` + `new Vuetify()` という既存の使い方に対してAPI互換（構造確認済み）。
+
+   ```typescript
+   resolve: {
+     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+     alias: [
+       { find: /^vuetify$/, replacement: 'vuetify/lib' },
+     ],
+   },
+   ```
+   （プレーン文字列 `'vuetify'` では前方一致になり `import 'vuetify/dist/vuetify.min.css'` まで誤って書き換えてしまうため、正規表現での完全一致指定が必須）
+
+   **副作用: `vuetify/lib` 配下の各コンポーネントは生の `.sass` ファイルを直接importする設計であり、このアプリには本物のDart Sassコンパイラ（`sass` パッケージ）が一度も導入されたことがなかった**（`node-sass` は既に削除済み、`sass` は未導入）。そのままビルドすると `sass.compileStringAsync is not a function` というAPI不整合が出る。対応: `sass` パッケージを devDependencies に明示的に追加する（`yarn add -D sass`。バージョンは固定せずyarnに最新を解決させる。Dart Sassのmodern API（`compileStringAsync`等）は概ね1.45以降に存在するため、素直に最新を入れれば通るはず）。
+
+   **併せて `app/javascript/entrypoints/application.js` から `import 'vuetify/dist/vuetify.min.css'` を削除する。** `vuetify/lib` 経由にすると各コンポーネントの `.sass` が個別にコンパイル・バンドルされるため、UMD版の事前コンパイル済みCSSを重ねて読み込むと二重適用・競合の原因になる。
+
+   このアプリはVuetifyのデフォルトテーマをそのまま使っており（`vuetify` variables のカスタマイズ用SCSSファイルは存在しない）、`additionalData` のようなグローバル変数注入設定は不要と見込まれる。
+
 最終的な `vite.config.mts`:
 ```typescript
 import { defineConfig } from 'vite'
@@ -349,6 +369,9 @@ import vue2 from '@vitejs/plugin-vue2'
 export default defineConfig({
   resolve: {
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    alias: [
+      { find: /^vuetify$/, replacement: 'vuetify/lib' },
+    ],
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
