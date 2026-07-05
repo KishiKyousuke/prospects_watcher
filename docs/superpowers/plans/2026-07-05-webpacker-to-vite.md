@@ -360,6 +360,24 @@ import '../registered_players'
 
    このアプリはVuetifyのデフォルトテーマをそのまま使っており（`vuetify` variables のカスタマイズ用SCSSファイルは存在しない）、`additionalData` のようなグローバル変数注入設定は不要と見込まれる。
 
+8. **（`vuetify/lib`移行に伴う追加判明事項）`vuetify/lib` の tree-shakeable `install()` はコンポーネント・ディレクティブを明示的に渡さないと何も登録しない。** UMD版 (`dist/vuetify.js`) は内部で全コンポーネントを自己登録していたが、`vuetify/lib` はa-la-carte設計のため `Vue.use(Vuetify)` を引数なしで呼ぶと `<v-app>` 等のタグがVueに認識されず、素のカスタム要素として描画されてしまう。`app/javascript/entrypoints/application.js` で以下のように全コンポーネント・ディレクティブを明示登録する（UMD版の「全部入り」挙動を再現するだけで、tree-shakingの最適化は今回は追求しない）:
+   ```javascript
+   import * as VuetifyComponents from 'vuetify/lib/components'
+   import * as VuetifyDirectives from 'vuetify/lib/directives'
+
+   Vue.use(Vuetify, { components: VuetifyComponents, directives: VuetifyDirectives })
+   ```
+
+9. **element-ui の完全削除に伴い、テンプレート外（JSメソッド呼び出し）の利用箇所が2種類残っていたことが判明。** 当初の監査は `<el-table>` のようなテンプレートタグのみを対象にしており、以下を見落としていた:
+   - `<el-button>` タグ（`RegisteredBatters.vue` / `RegisteredPitchers.vue` の「比較する」「解除する」ボタン、計4箇所）→ `<v-btn color="primary" small rounded>` / `<v-btn color="error" small rounded>` へ機械的に置換（`<el-table>`と同種の対応のため独立の承認なしで実施）
+   - `this.$notify({title, message, type})`（Element UI の Notification API。`RegisterButton.vue`, `RegisteredBatters.vue`, `RegisteredPitchers.vue`, `PlayerSearch.vue` の計5箇所）→ 同一シグネチャを維持したまま Vuetify の `v-snackbar` で再実装する新規ファイル `app/javascript/notify_plugin.js` を追加。単一のホストVueインスタンスを `document.body` 直下にマウントし、`all_teams.js` / `player_search.js` / `registered_players.js` の3つの独立したVueルートから共有する。呼び出し側（`.vue`ファイル）は無改修。
+
+   置換完了後、全`.vue`ファイルに `<el-[a-z-]+` パターンの残存がないことをスキャンして確認済み。
+
+   併せて、置換済みで不要になった `.el-button { color: white; font-weight: bold; }` という死んだCSSセレクタが `RegisteredBatters.vue` / `RegisteredPitchers.vue` の scoped style に残っていたため削除した（別コミット）。
+
+10. **比較モーダルの開閉トランジション中にクリックが取りこぼされるflakyテストを修正。** `registered_players_spec.rb` の「比較するボタンをクリックした時」の `before` ブロックで、`click_on '比較する'` の直後に `.mdi-close-circle` をクリックする別テストが、Vuetifyダイアログの開くトランジション（フェード/スケール、約300ms）が完了する前にクリックを発行してしまい、稀に取りこぼされていた（診断: 失敗時に `.v-dialog__content--active` がまだ付与されていない状態でクリックが実行されていたことを実測で確認）。共通の `before` ブロックに `expect(page).to have_selector('.v-card.v-sheet.theme--light', text: '前田 智徳')` を追加し、ダイアログの描画完了を待ってから後続の操作・検証に進むよう修正（アプリコード側の変更ではなく、Capybaraの標準的な待機パターンをテスト側に追加しただけ）。
+
 最終的な `vite.config.mts`:
 ```typescript
 import { defineConfig } from 'vite'
