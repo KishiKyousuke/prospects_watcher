@@ -50,7 +50,7 @@ docker compose up   # PostgreSQL (5433) + webpack-dev-server (3035)
 
 NPBプロ野球選手の統計情報をYahoo Sports Japanからスクレイピングし、ユーザーがお気に入り選手を登録・比較・閲覧できるWebアプリ。
 
-**スタック**: Ruby 3.0.6 / Rails 6.0.6.1 / PostgreSQL / Vue.js 2 + Vuex + Vuetify 2 / Webpacker / Slim
+**スタック**: Ruby 3.2.11 / Rails 7.0.10 / PostgreSQL / Vue.js 2 + Vuex + Vuetify 2 / Webpacker / Slim
 
 ### データフロー
 
