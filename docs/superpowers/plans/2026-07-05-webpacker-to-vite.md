@@ -516,6 +516,17 @@ git add Gemfile Gemfile.lock package.json yarn.lock config/boot.rb
 git commit -m "chore: Webpackerを完全に撤去"
 ```
 
+**実装メモ（PRのCI実行で判明した2件の見逃し。いずれもローカル検証の構造的な盲点が原因）:**
+
+1. **`bin/vite`（vite installerが生成）に9件のrubocop違反があった。** ローカルの`bundle exec rubocop`（引数なしのフルスキャン）は`bin/`配下の拡張子なしスクリプト（`bin/vite`含む計8ファイル）をなぜか対象から外しており、CIだけが検出した。`bundle exec rubocop bin/`のように明示的にパスを指定すると正しく検出できる。原因は特定のフックではなく、rubocopの自動ファイル検出そのものの挙動差。`bundle exec rubocop -A bin/`で自動修正した。
+2. **CIの`bin/vite build`ステップが`bin/bundle`経由でGemfile.lockの`BUNDLED WITH 2.5.15`を厳密に要求し、`rubygems: latest`設定のCI環境（bundler 4.0.15のみインストール）でactivate失敗していた。** `bundle exec rspec`等の他のステップは`bin/bundle`を経由しないため無事だった。CIの該当ステップを`bin/vite build`→`bundle exec vite build`に変更して回避した。
+3. **`postcss.config.js`（Webpacker時代からの既存ファイル、このブランチでは無改修）が要求する`postcss-import`/`postcss-flexbugs-fixes`/`postcss-preset-env`が`package.json`に一度も明記されておらず、Task 4で削除した`@rails/webpacker`の推移的依存として密かにインストールされていたことが判明。** worktree自身の`node_modules`では（Task 4適用後の正しい状態として）これらが存在しないが、worktreeがメインリポジトリのディレクトリ配下にネストしているため、Node.jsの`require()`解決が親ディレクトリ（メインリポジトリの`node_modules`、Task 4未適用でwebpacker由来のこれらパッケージが残存）まで遡って偶然発見しており、ローカルのViteビルド検証はずっとこの構造的な偶然に支えられていた。CI（独立したチェックアウト）で初めて`[vite:css] Cannot find module 'postcss-import'`として顕在化。3パッケージを明示的にdevDependenciesへ追加して解消（`postcss-preset-env`は最新版が`@csstools/postcss-color-function`経由でNode >=20.19.0を要求するため、Task 2/Task 3の`vite`/`sass`と同じ理由で`10.6.1`に固定）。
+
+```bash
+git add bin/vite .github/workflows/ci.yml package.json yarn.lock
+git commit -m "fix: bin/viteのrubocop違反修正、CIのbundle exec vite build化、不足していたpostcssプラグインの追加"
+```
+
 ---
 
 ### Task 5: Docker / 環境変数まわりを整理する
