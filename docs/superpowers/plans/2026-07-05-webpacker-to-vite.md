@@ -294,8 +294,51 @@ import '../registered_players'
 
 **実装メモ（Step 4検証で追加判明した2件、いずれも `vite.config.mts` の設定のみで解決。`.vue`ファイルは無変更）:**
 
-4. **`resolve.dedupe: ['vue']` を追加**。原因: `element-ui` の `lib/element-ui.common.js` は webpack でプリバンドルされたCJS塊（`/******/ (function(modules) { // webpackBootstrap` で始まる）であり、内部で `require("vue")` を呼んでいる。この呼び出しはNode/RollupのCJS解決規則に従い `vue` の `package.json` の `"main"` フィールド（`dist/vue.runtime.common.js`）を解決するが、`.vue` ファイル側の `import Vue from 'vue'` は `@vitejs/plugin-vue2` が `vue/dist/vue.runtime.esm.js` へエイリアスする。結果、**物理的に異なる2つのVueビルドが同一バンドルに混入し**、Vuetifyが `Multiple instances of Vue detected` を検出して初期化に失敗し、`AllTeams.vue` のマウント先が空描画になる。`resolve.dedupe` はVite公式のドキュメント記載機能で、指定パッケージへの全解決経路を単一の実体に強制的に一致させる。
-5. **`define: { 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development') }` を追加**。原因: webpack 4は `process.env.NODE_ENV` をデフォルトでビルド時に埋め込むが、Viteは行わない。`vue-simple-suggest` 等のCJS由来ライブラリが未ガードで `process.env.NODE_ENV` を参照している箇所があり、Vite上では `ReferenceError: process is not defined` になりうる。同種の踏み抜きが他のライブラリでも起こり得るため、ここで先回りして埋める。
+4. **（試行→棄却）`resolve.dedupe: ['vue']` は効果なしと実証済み**。当初の仮説: `element-ui` の `lib/element-ui.common.js` は webpack でプリバンドルされたCJS塊（`/******/ (function(modules) { // webpackBootstrap` で始まる）であり、内部で `require("vue")` を呼んでいる。この呼び出しが `vue` の `package.json` の `"main"` フィールド（`dist/vue.runtime.common.js`）を解決する一方、`.vue` ファイル側の `import Vue from 'vue'` は `@vitejs/plugin-vue2` が `vue/dist/vue.runtime.esm.js` へエイリアスするため、物理的に異なる2つのVueビルドが同一バンドルに混入しVuetifyが `Multiple instances of Vue detected` で初期化に失敗する——という筋は正しかった。しかし `resolve.dedupe` を適用しても **ビルド成果物のSHA1が1バイトも変わらなかった**（`dedupe` に実在しないパッケージ名を入れても同じSHA1になることで実証）。理由: `dedupe` はディスク上に複数コピーが存在する場合の解決先統一機構であり、今回は `node_modules/vue` は1つしかない。実際の原因はCJS-interop経路とESMエイリアス経路の解決パイプライン自体が分岐している構造的な問題であり、`dedupe` が効くケースではなかった。
+5. **`define: { 'process.env.NODE_ENV': ... }` は無害だが根本解決にはならない**。`vue-simple-suggest` 内の問題箇所は `process.env.NODE_ENV` という文字列一致ではなく裸の `process` 参照（`process&&~"production".indexOf(...)`）であり、`define` の文字列置換の対象外だった。実害は非致命的（`PlayerSearch.vue` 自体は描画される）と確認済みのため、これは既知の軽微な問題として残し、深追いしない。
+6. **根本対応: `element-ui` 依存を完全に削除する。** `AllTeams.vue` ツリーで実際に `element-ui` を使っているのは `TeamPlayers.vue` の `<el-table>` 一箇所のみ。Phase 4の元々の計画（UIライブラリ移行）でもElement UIはどのみち置換対象だったため、この箇所を前倒しで **Vuetifyの `v-simple-table`**（既存の Vuetify 依存だけで完結する軽量テーブルコンポーネント、追加パッケージ不要）に置き換え、`element-ui` を entrypoint・`package.json` から完全に削除する。これによりバンドルから問題の webpackプリバンドル済みCJS塊自体が消え、Vue重複インスタンス問題の根本原因が解消する。この変更は `.vue` ファイルのテンプレートに触れる（当初の「Vue無改修」原則からの部分的な逸脱）が、ユーザー承認済み。
+
+   `TeamPlayers.vue` の該当箇所（野手・投手それぞれ）を以下のように置き換える:
+   ```html
+   <v-simple-table>
+     <template v-slot:default>
+       <thead>
+         <tr>
+           <th>背番号</th>
+           <th>名前</th>
+           <th></th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr v-for="player in teamBatters[0]" :key="player.id">
+           <td>{{ player.number }}</td>
+           <td>{{ player.name }}</td>
+           <td>
+             <register-button :selected-player-id="player.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
+           </td>
+         </tr>
+       </tbody>
+     </template>
+   </v-simple-table>
+   ```
+   （投手側も同様に `teamPitchers[0]` / `'pitchers'` で複製する）
+
+   `<style scoped>` の `/deep/ .el-table th>.cell` / `/deep/ .el-table td>.cell` は、もう `el-table` の内部DOMを深く貫通する必要がないため（`v-simple-table` のスロット内は自コンポーネントのテンプレートそのもの）、素の `th` / `td` セレクタに単純化する:
+   ```css
+   th {
+     font-size: 1rem;
+   }
+   td {
+     font-size: 1.3rem;
+     padding: 4px 0;
+   }
+   ```
+
+   併せて以下を削除する:
+   - `app/javascript/entrypoints/application.js` の `import ElementUI from 'element-ui'` / `Vue.use(ElementUI)` / `import 'element-ui/lib/theme-chalk/index.css'`
+   - `package.json` の `element-ui` 依存（`yarn remove element-ui`）
+
+   `vite.config.mts` から `resolve.dedupe: ['vue']` は（効果がないため）削除してよい。`define` の `process.env.NODE_ENV` は無害な追加ハードニングとして残す。
 
 最終的な `vite.config.mts`:
 ```typescript
@@ -306,7 +349,6 @@ import vue2 from '@vitejs/plugin-vue2'
 export default defineConfig({
   resolve: {
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
-    dedupe: ['vue'],
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
