@@ -242,6 +242,56 @@ import '../registered_players'
 = vite_javascript_tag 'application', 'data-turbolinks-track': 'reload'
 ```
 
+**実装メモ（Step 1/2完了後、Step 3検証で判明した必須の追加修正）:** 当初の想定「Vue関連ファイルの中身には一切触れない」は、`.vue` ファイル自体（テンプレート・スクリプトロジック）に対しては成立するが、エントリポイントとActionCableのブートストラップ層はwebpack固有の機能に依存しており、Vite単体では動作しない。以下3点はVue移行の本編に一切関係のない、純粋なバンドラー互換性のための必須修正であり、`.vue`ファイルは1つも変更しない:
+
+1. **`vite.config.mts` に `.vue` の拡張子解決を追加する**（設定ファイルのみの変更。`.vue` ファイル側の import 文は一切変更不要）。理由: Vite/Rollupのデフォルト `resolve.extensions` に `.vue` が含まれておらず、`import TeamPlayers from './TeamPlayers'` のような拡張子省略の `.vue` import が解決できない（`AllTeams.vue`, `TeamPlayers.vue`, `RegisteredPlayers.vue`, `RegisteredBatters.vue`, `RegisteredPitchers.vue` の計7箇所が該当）。
+   ```typescript
+   export default defineConfig({
+     resolve: {
+       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+     },
+     plugins: [
+       RubyPlugin(),
+       vue2(),
+     ],
+   })
+   ```
+
+2. **`app/javascript/entrypoints/application.js` の `require(...)` 呼び出しを `import` 文に書き換える**（このファイル自体は元々このタスクで移動対象。中身の書き換えは実質「CommonJS構文をESM構文に直す」だけで、ロジック・読み込み順は変えない）。理由: このファイルはVite配下では `type="module"` の `<script>` として配信されるが、ブラウザのESMコンテキストに `require` はグローバル定義されておらず、`require("@rails/ujs").start()` 等はそのまま出力されても実行時に `ReferenceError` になる（webpack+babelはこれをビルド時にESMへ変換していたが、Viteは自分のソースコード中の `require()` を書き換えない）。
+   ```javascript
+   import Rails from '@rails/ujs'
+   import Turbolinks from 'turbolinks'
+   import * as ActiveStorage from '@rails/activestorage'
+   import Vue from 'vue'
+   import ElementUI from 'element-ui'
+   import Vuetify from 'vuetify'
+
+   import '../channels'
+   import '../css/application.css'
+   import 'element-ui/lib/theme-chalk/index.css'
+   import 'vuetify/dist/vuetify.min.css'
+   import '@mdi/font/css/materialdesignicons.css'
+
+   import '../all_teams'
+   import '../player_search'
+   import '../registered_players'
+
+   Rails.start()
+   Turbolinks.start()
+   ActiveStorage.start()
+
+   Vue.use(ElementUI)
+   Vue.use(Vuetify)
+   ```
+
+3. **`app/javascript/channels/index.js` の `require.context(...)` を `import.meta.glob(...)` に書き換える**（Vueとは無関係のActionCableブートストラップ用ヘルパー。現状 `*_channel.js` に該当するファイルは存在しないため実害はまだ出ていないが、`require.context` はwebpack専用APIでありVite上では単純に `ReferenceError` になる）。
+   ```javascript
+   // Load all the channels within this directory and all subdirectories.
+   // Channel files must be named *_channel.js.
+
+   const channels = import.meta.glob('./**/*_channel.js', { eager: true })
+   ```
+
 - [ ] **Step 3: フロントエンド開発サーバーを起動し、手動で疎通確認**
 
 別ターミナルで Vite dev server を起動:
