@@ -316,7 +316,12 @@ RSpec.describe '登録済み選手一覧', type: :system do
       end
 
       context '比較するボタンをクリックした時' do
-        before { click_on '比較する' }
+        before do
+          click_on '比較する'
+          # ダイアログの開くトランジションが完了し、中身が描画されるまで待つ
+          # (トランジション中に閉じるボタンをクリックすると click が取りこぼされることがあるため)
+          expect(page).to have_selector('.v-card.v-sheet.theme--light', text: '前田 智徳')
+        end
 
         it '選手の比較モーダルが開き、優れている指標が強調されること' do
           within('.v-card.v-sheet.theme--light') do

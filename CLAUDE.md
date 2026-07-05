@@ -31,6 +31,9 @@ rake scrape:batter_record     # 打者のみ
 rake scrape:pitcher_record    # 投手のみ
 rake delete_retired_player_record  # 退団選手データ削除
 
+# フロントエンドの本番ビルド確認
+bin/vite build
+
 # 初回セットアップ (上記を一括実行)
 bin/setup
 ```
@@ -39,18 +42,18 @@ bin/setup
 
 ```bash
 docker compose build
-docker compose up   # PostgreSQL (5433) + webpack-dev-server (3035)
+docker compose up   # PostgreSQL (5433)
+bin/vite dev        # フロントエンド開発サーバー（HMR）。host上で直接実行する
 ```
 
 `.envrc` (direnv) でDB接続情報を管理:
 - `POSTGRES_HOST=127.0.0.1`, `POSTGRES_PORT=5433`, `POSTGRES_USER/PASSWORD`
-- `WEBPACKER_DEV_SERVER_HOST=prospects-watcher`
 
 ## アーキテクチャ
 
 NPBプロ野球選手の統計情報をYahoo Sports Japanからスクレイピングし、ユーザーがお気に入り選手を登録・比較・閲覧できるWebアプリ。
 
-**スタック**: Ruby 3.2.11 / Rails 7.0.10 / PostgreSQL / Vue.js 2 + Vuex + Vuetify 2 / Webpacker / Slim
+**スタック**: Ruby 3.2.11 / Rails 7.0.10 / PostgreSQL / Vue.js 2.7 + Vuex + Vuetify 2 / Vite / Slim
 
 ### データフロー
 

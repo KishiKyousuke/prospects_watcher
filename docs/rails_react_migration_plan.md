@@ -17,7 +17,9 @@ Claude Code は新規セッションでこのファイルを読み、現在の�
 - [x] Phase 1 — Ruby 3.0.6 → 3.2.11
 - [x] Phase 2 — Rails 6.0 → 6.1
 - [x] Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）
-- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行 ← **次の着手ポイント**
+- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行
+  - [x] 手順1: Webpacker → Vite 移行 ✅
+  - [ ] 手順2以降: Reactストラングラー導入 ← **次の着手ポイント**
 - [ ] Phase 5 — Rails 7.0 → 7.1 → 7.2 → 8.0
 
 着手・完了したフェーズはチェックを更新すること。
@@ -65,20 +67,30 @@ Claude Code は新規セッションでこのファイルを読み、現在の�
 
 ### Phase 4 — Webpacker脱却 + Vue → React 移行（本丸）
 
-Rails 7.0 上で `jsbundling-rails` (esbuild) に置換し、**同時に** React を導入する。
-Webpacker → jsbundling の移行作業と Vue → React の書き換えはどちらも esbuild への対応を含むため、二段階に分けると重複工数が発生する。
+Rails 7.0 上で **Vite** (`vite_rails` gem) に置換する。
+
+**ビルドツールに Vite を選定した理由（2026-07-05 決定）**: 当初案の `jsbundling-rails` (esbuild) は Vue 2 の `.vue` 単一ファイルコンポーネントを正式サポートするesbuildプラグインが存在せず、コミュニティ製の非公式プラグインに頼ることになる。本番稼働中ではない（＝切り戻しコストが低い）ことを踏まえても、Vue/React併存期間中に不安定な非公式プラグインへ依存するリスクは避けるべきと判断した。Vite は公式の `@vitejs/plugin-vue2`（Vue 2.7系）と公式の `@vitejs/plugin-react` の両方が揃っており、併存期間の安定性が高い。
+
+Webpacker → Vite の移行作業と Vue → React の書き換えはどちらもビルド設定への対応を含むため、二段階に分けると重複工数が発生する——という当初の判断は撤回し、**ビルドツール移行（Vue動作は無改修で完全維持）を独立した最初のステップとして先に完了させる**。これにより「ビルドツールを変えた」ことによる不具合と「Reactへの書き換え」による不具合を混同せず切り分けられる。
 
 #### 手順
 
-1. `jsbundling-rails` (esbuild) を導入、`app/javascript/application.js` をエントリポイントに設定
-2. **ストラングラーパターン**で Vue と React を一時併存させる
+1. **Webpacker → Vite 移行**（本ステップ。Vueコンポーネントの内容は一切変更しない）
+   - 前提として Vue 2.6.12 → 2.7系へ minor bump（`@vitejs/plugin-vue2` が公式サポートするのは Vue 2.7系のため）
+   - `vite_rails` gem 導入、`config/vite.json` / `vite.config.ts` を設定（`sourceCodeDir` は既存の `app/javascript` を踏襲し、`packs/` は `entrypoints/` に置き換え）
+   - レイアウトの `javascript_pack_tag` / `stylesheet_pack_tag` を `vite_client_tag` / `vite_javascript_tag` に置換
+   - Webpacker関連設定 (`config/webpacker.yml`, `config/webpack/`, `bin/webpack*`, `config/boot.rb` のYAML alias monkey-patch) を削除
+   - 詳細は `docs/superpowers/plans/2026-07-05-webpacker-to-vite.md` を参照
+2. **ストラングラーパターン**で Vue と React を一時併存させる（`@vitejs/plugin-react` を追加導入）
 3. コンポーネント置換順（依存の浅いものから）:
-   - `RegisterButton.vue` → React版
-   - `CompareBatterScoreTable.vue` / `ComparePitcherScoreTable.vue`
-   - `AllTeams.vue`
-   - `RegisteredPlayers.vue`（最後・最も状態が複雑）
-4. 状態管理: Vuex → **Zustand** または **Redux Toolkit**（このアプリ規模ならZustandで十分）
-5. UIライブラリ: Vuetify 2 → **MUI v5**（移行コスト最小）
+   - `RegisterButton.vue` → React版（`TeamPlayers.vue` にネストされたリーフ）
+   - `CompareBatterScoreTable.vue` / `ComparePitcherScoreTable.vue`（`RegisteredBatters.vue` / `RegisteredPitchers.vue` にネストされたリーフ）
+   - `AllTeams.vue`（`TeamPlayers.vue` ごと巻き取り）
+   - `PlayerSearch.vue`（vue-simple-suggest相当のReact実装が必要。当初リストに漏れていたため追加）
+   - `RegisteredPlayers.vue`（`RegisteredBatters.vue` / `RegisteredPitchers.vue` / `BlankPage.vue` ごと巻き取り。最後・最も状態が複雑）
+4. 状態管理: Vuex (`store.js`) → **Zustand** または **Redux Toolkit**（このアプリ規模ならZustandで十分）
+   - `store.js` の `updateFlag` は `PlayerSearch` と `RegisteredPlayers` 間の更新通知に使われている。React移行後も同等の通知手段を用意すること
+5. UIライブラリ: Vuetify 2 → **MUI v5**（移行コスト最小）。Element UI（`TeamPlayers.vue` の `el-table`）、vue-good-table（`RegisteredBatters.vue` / `RegisteredPitchers.vue`）、vue-simple-suggest（`PlayerSearch.vue`）も同時期に置き換え対象
    - 移行開始時に Vuetify → MUI のコンポーネント対応表を作成
 6. API側 (`/api/v1/`) は無改修
 7. 各コンポーネント置換ごとにシステムテストで動作確認
@@ -87,7 +99,7 @@ Webpacker → jsbundling の移行作業と Vue → React の書き換えはど�
 
 - Vue / React 併存期間は**できる限り短く**保つ。半年以上の並走は避ける
 - 比較テーブルは挙動差分が出やすい。スクリーンショット比較か手動QAリストを用意
-- Webpacker関連設定 (`config/webpacker.yml`, `config/webpack/`, `bin/webpack*`) は移行完了後に削除
+- Vue関連パッケージ (`vue`, `vuex`, `vuetify`, `element-ui`, `vue-good-table`, `vue-simple-suggest`, `vue-template-compiler`, `@vitejs/plugin-vue2`) は React 移行完了後に削除
 
 ### Phase 5 — Rails 7.0 → 7.1 → 7.2 → 8.0
 
@@ -99,5 +111,6 @@ Webpacker → jsbundling の移行作業と Vue → React の書き換えはど�
 ## 参考リンク
 
 - Rails Upgrade Guide: https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
-- jsbundling-rails: https://github.com/rails/jsbundling-rails
+- Vite Ruby: https://vite-ruby.netlify.app/guide/
+- vite-plugin-vue2 (公式, Vue 2.7): https://github.com/vitejs/vite-plugin-vue2
 - Webpacker retirement: https://github.com/rails/webpacker

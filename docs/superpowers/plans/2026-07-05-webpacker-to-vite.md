@@ -1,0 +1,807 @@
+# Webpacker → Vite 移行 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Webpacker 4.x を廃止し、Vite (`vite_rails` gem) に置き換える。Vue コンポーネントの実装・挙動は一切変更しない（ビルドツール移行のみを独立した変更として完結させる）。
+
+**Architecture:** 既存の単一エントリポイント構成（`app/javascript/packs/application.js` が `all_teams.js` / `player_search.js` / `registered_players.js` を import し、3つのDOM要素にVueアプリを個別マウントする構成）をそのまま踏襲する。エントリポイントの置き場所を Vite の規約 (`app/javascript/entrypoints/`) に合わせて移動するだけで、インポートされる子ファイル群（`all_teams.js` 等）や `.vue` ファイルの中身には触れない。Vue 2.6.12 は Vite の公式プラグイン `@vitejs/plugin-vue2` が要求する Vue 2.7 系へ minor bump する（Vue 2.7 は 2.6 に対して後方互換）。フロントエンド開発サーバーは Docker コンテナ経由ではなく、host 上で直接 `bin/vite dev` を実行する方式に変更する（Webpacker が抱えていたコンテナ間ホスト解決の複雑さ (`WEBPACKER_DEV_SERVER_HOST`) を解消するため）。
+
+**Tech Stack:** Ruby 3.2.11 / Rails 7.0.10 / vite_rails (Vite Ruby) / @vitejs/plugin-vue2 / Vue 2.7 / 既存の Vuetify 2, Vuex, Element UI, vue-good-table, vue-simple-suggest はそのまま維持
+
+**この計画に含まれないもの:** React導入、Vueコンポーネントの書き換え、状態管理・UIライブラリの置き換え。これらは本計画の完了後、別の実行計画として着手する（`docs/rails_react_migration_plan.md` Phase 4 手順2以降）。
+
+---
+
+## 現状（移行前）の構成
+
+- `Gemfile`: `gem 'webpacker', '~> 4.0'`
+- `package.json` dependencies: `@rails/webpacker 5.4.0`, `vue ^2.6.12`, `vue-template-compiler ^2.6.12`, `vue-loader ^15.9.5`, `file-loader ^6.2.0`, devDependencies: `webpack-dev-server ^3.11.2`
+- `config/webpacker.yml`, `config/webpack/{development,test,production,environment}.js`, `config/webpack/loaders/vue.js`
+- `bin/webpack`, `bin/webpack-dev-server`
+- `config/boot.rb` に Psych 4.0 alias 回避のための webpacker 4.x 向け monkey-patch（Phase 1 で追加、「Phase 4 で削除」と明記済み）
+- エントリポイント: `app/javascript/packs/application.js`（`../all_teams`, `../player_search`, `../registered_players`, CSS群を import）
+- レイアウト: `app/views/layouts/application.html.slim` の `stylesheet_pack_tag` / `javascript_pack_tag`
+- `docker-compose.yml`: `webpacker` サービスが `bin/webpack-dev-server` をコンテナ内で実行（ポート3035）
+- `.envrc`: `WEBPACKER_DEV_SERVER_HOST=prospects-watcher`
+- `.github/workflows/ci.yml`: Node 16、`bundle exec rails webpacker:compile` ステップ
+- `CLAUDE.md`: スタック表記に `Webpacker`、Docker環境説明に `webpack-dev-server (3035)`
+
+## 移行後の構成（本計画のゴール）
+
+- `Gemfile`: `gem 'vite_rails'`
+- `package.json`: `vue`/`vue-template-compiler` は `^2.7`、`vite-plugin-ruby` と `@vitejs/plugin-vue2` を追加、`@rails/webpacker` / `vue-loader` / `file-loader` / `webpack-dev-server` を削除
+- `vite.config.ts`, `config/vite.json` を新規追加
+- エントリポイント: `app/javascript/entrypoints/application.js`（内容は移動のみ、import先は無変更）
+- レイアウト: `vite_client_tag` / `vite_javascript_tag`
+- `docker-compose.yml`: `db` サービスのみ。フロントエンド開発サーバーは host 上で `bin/vite dev` を直接実行
+- `.envrc`: `WEBPACKER_DEV_SERVER_HOST` 行を削除
+- CI: Node 20、`bin/vite build` ステップ
+- `CLAUDE.md`: スタック表記・Docker環境説明・Commands セクションを更新
+
+---
+
+### Task 1: Vue 2.6 → 2.7 への minor bump（単独で先に検証する）
+
+**目的:** `@vitejs/plugin-vue2` は Vue 2.7 系を対象にした公式プラグインである。ビルドツール移行と同時に Vue のバージョンも上げると、不具合が起きた際にどちらが原因か切り分けられなくなる。まずこのステップ単独で `bundle exec rspec` が全て緑であることを確認する。
+
+**Files:**
+- Modify: `package.json`
+- Modify: `yarn.lock`（`yarn add` コマンドが自動更新）
+
+- [ ] **Step 1: Vue と vue-template-compiler を 2.7 系に上げる**
+
+```bash
+yarn add vue@^2.7 vue-template-compiler@^2.7
+```
+
+- [ ] **Step 2: package.json の該当箇所がバージョン範囲 `^2.7.x` に更新されたことを確認**
+
+Run: `grep -A1 '"vue":' package.json`
+Expected: `"vue": "^2.7.x"` のような 2.7 系のバージョンが表示される（`x` は yarn が解決した実際のパッチバージョン）
+
+- [ ] **Step 3: 既存のフロントエンド資産をWebpackerでビルドし直し、コンパイルエラーが出ないことを確認**
+
+Run: `bin/webpack-dev-server &` のようなことはせず、代わりに以下でテスト環境の webpack ビルドを直接走らせる:
+
+```bash
+RAILS_ENV=test bundle exec rails webpacker:compile
+```
+
+Expected: `Compiling...` のあと `Compiled all packs in ...` で正常終了（エラー・warningなし、または既存と同水準のwarningのみ）
+
+- [ ] **Step 4: 既存の全テストスイートを実行し、Vue バージョンアップによる回帰がないことを確認**
+
+Run: `bundle exec rspec`
+Expected: 既存のテスト件数がすべて `0 failures` でパスする（システムテスト含む）
+
+- [ ] **Step 5: コミット**
+
+```bash
+git add package.json yarn.lock
+git commit -m "chore: Vue 2.6 から 2.7 系へ minor bump"
+```
+
+---
+
+### Task 2: `vite_rails` を追加導入する（Webpackerと併存させ、まだ切り替えない）
+
+**目的:** この時点ではまだ `app/views/layouts/application.html.slim` は Webpacker のタグを使い続ける。Vite関連ファイルを一式追加するだけの、ユーザーから見て無害な変更にとどめる。
+
+**Files:**
+- Modify: `Gemfile`
+- Modify: `Gemfile.lock`（`bundle install` が自動更新）
+- Create: `vite.config.ts`
+- Create: `config/vite.json`
+- Create: `bin/vite`（installer が生成）
+- Modify: `package.json` / `yarn.lock`
+
+- [ ] **Step 1: Gemfile に vite_rails を追加し、webpacker はまだ残す**
+
+`Gemfile` の以下の行:
+
+```ruby
+# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
+gem 'webpacker', '~> 4.0'
+```
+
+の直後に追加:
+
+```ruby
+# Frontend build tool (Webpacker の後継). Read more: https://vite-ruby.netlify.app/
+gem 'vite_rails'
+```
+
+- [ ] **Step 2: bundle install**
+
+```bash
+bundle install
+```
+
+Expected: `Bundle complete!` で正常終了
+
+- [ ] **Step 3: Vite installer を実行**
+
+```bash
+bundle exec vite install
+```
+
+Expected: `vite.config.ts`, `config/vite.json`, `bin/vite` が生成され、`package.json` に `vite` / `vite-plugin-ruby` が devDependencies として追加される旨のログが出力される
+
+- [ ] **Step 4: `config/vite.json` の `sourceCodeDir` を既存の `app/javascript` に向ける**
+
+`config/vite.json` を以下の内容に編集する（installer が生成したデフォルト値に `sourceCodeDir` を追加した形）:
+
+```json
+{
+  "all": {
+    "sourceCodeDir": "app/javascript",
+    "watchAdditionalPaths": []
+  },
+  "development": {
+    "autoBuild": true,
+    "publicOutputDir": "vite-dev",
+    "port": 3036
+  },
+  "test": {
+    "autoBuild": true,
+    "publicOutputDir": "vite-test",
+    "port": 3037
+  }
+}
+```
+
+- [ ] **Step 5: `@vitejs/plugin-vue2` を追加し、`vite.config.ts` に組み込む**
+
+```bash
+yarn add -D @vitejs/plugin-vue2
+```
+
+`vite.config.ts` を以下の内容に編集:
+
+```typescript
+import { defineConfig } from 'vite'
+import RubyPlugin from 'vite-plugin-ruby'
+import vue2 from '@vitejs/plugin-vue2'
+
+export default defineConfig({
+  plugins: [
+    RubyPlugin(),
+    vue2(),
+  ],
+})
+```
+
+- [ ] **Step 6: 既存の Webpacker 経由のページがまだ問題なく動くことを確認（この時点ではVite側はまだレイアウトから参照されていない）**
+
+Run: `bundle exec rspec`
+Expected: Task 1 と同様、全テストがパスする（Vite関連ファイルの追加が既存動作に影響していないことの確認）
+
+- [ ] **Step 7: コミット**
+
+```bash
+git add Gemfile Gemfile.lock package.json yarn.lock vite.config.ts config/vite.json bin/vite
+git commit -m "chore: vite_rails を追加導入（Webpackerとまだ併存、切り替えは次コミット）"
+```
+
+**実装メモ:** 実際の実装では `vite` は installer デフォルトの `^8.1.3` ではなく `^6.4.3` に固定した。理由は開発機の Node が 18.18.2 であり、Vite 8 の `engines.node`（`^20.19.0 || >=22.12.0`）を満たさず `yarn add` がエンジンチェックで失敗するため。この固定は Task 6 で CI/開発環境の Node を 20 系以上に上げた際に見直すこと（Node 18 を使い続ける環境が残っている限りは `^6` のままにする）。
+
+---
+
+### Task 3: エントリポイントを移動し、レイアウトを Vite タグに切り替える（本丸のカットオーバー）
+
+**Files:**
+- Move: `app/javascript/packs/application.js` → `app/javascript/entrypoints/application.js`
+- Modify: `app/views/layouts/application.html.slim`
+
+- [ ] **Step 1: エントリポイントを Vite の規約ディレクトリに移動**
+
+```bash
+mkdir -p app/javascript/entrypoints
+git mv app/javascript/packs/application.js app/javascript/entrypoints/application.js
+rmdir app/javascript/packs
+```
+
+`app/javascript/entrypoints/application.js` の中身はそのまま変更しない（`../all_teams` 等の相対パスは `app/javascript/` 直下を指しており、`packs/` から `entrypoints/` への移動後も相対階層は変わらないため無修正で動く）:
+
+```javascript
+require("@rails/ujs").start()
+require("turbolinks").start()
+require("@rails/activestorage").start()
+require("channels")
+
+import Vue from 'vue'
+import ElementUI from 'element-ui'
+import Vuetify from 'vuetify'
+
+Vue.use(ElementUI)
+Vue.use(Vuetify)
+
+import '../css/application.css'
+import 'element-ui/lib/theme-chalk/index.css'
+import 'vuetify/dist/vuetify.min.css'
+import '@mdi/font/css/materialdesignicons.css'
+
+import '../all_teams'
+import '../player_search'
+import '../registered_players'
+```
+
+- [ ] **Step 2: レイアウトの pack タグを Vite タグに置き換える**
+
+`app/views/layouts/application.html.slim` の以下の行:
+
+```slim
+= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+```
+
+を以下に置き換える（`application.js` が CSS を import しているため `vite_javascript_tag` が対応するスタイルタグも自動挿入する。個別の `vite_stylesheet_tag` は不要）:
+
+```slim
+= vite_client_tag
+= vite_javascript_tag 'application', 'data-turbolinks-track': 'reload'
+```
+
+**実装メモ（Step 1/2完了後、Step 3検証で判明した必須の追加修正）:** 当初の想定「Vue関連ファイルの中身には一切触れない」は、`.vue` ファイル自体（テンプレート・スクリプトロジック）に対しては成立するが、エントリポイントとActionCableのブートストラップ層はwebpack固有の機能に依存しており、Vite単体では動作しない。以下3点はVue移行の本編に一切関係のない、純粋なバンドラー互換性のための必須修正であり、`.vue`ファイルは1つも変更しない:
+
+1. **`vite.config.mts` に `.vue` の拡張子解決を追加する**（設定ファイルのみの変更。`.vue` ファイル側の import 文は一切変更不要）。理由: Vite/Rollupのデフォルト `resolve.extensions` に `.vue` が含まれておらず、`import TeamPlayers from './TeamPlayers'` のような拡張子省略の `.vue` import が解決できない（`AllTeams.vue`, `TeamPlayers.vue`, `RegisteredPlayers.vue`, `RegisteredBatters.vue`, `RegisteredPitchers.vue` の計7箇所が該当）。
+   ```typescript
+   export default defineConfig({
+     resolve: {
+       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+     },
+     plugins: [
+       RubyPlugin(),
+       vue2(),
+     ],
+   })
+   ```
+
+2. **`app/javascript/entrypoints/application.js` の `require(...)` 呼び出しを `import` 文に書き換える**（このファイル自体は元々このタスクで移動対象。中身の書き換えは実質「CommonJS構文をESM構文に直す」だけで、ロジック・読み込み順は変えない）。理由: このファイルはVite配下では `type="module"` の `<script>` として配信されるが、ブラウザのESMコンテキストに `require` はグローバル定義されておらず、`require("@rails/ujs").start()` 等はそのまま出力されても実行時に `ReferenceError` になる（webpack+babelはこれをビルド時にESMへ変換していたが、Viteは自分のソースコード中の `require()` を書き換えない）。
+   ```javascript
+   import Rails from '@rails/ujs'
+   import Turbolinks from 'turbolinks'
+   import * as ActiveStorage from '@rails/activestorage'
+   import Vue from 'vue'
+   import ElementUI from 'element-ui'
+   import Vuetify from 'vuetify'
+
+   import '../channels'
+   import '../css/application.css'
+   import 'element-ui/lib/theme-chalk/index.css'
+   import 'vuetify/dist/vuetify.min.css'
+   import '@mdi/font/css/materialdesignicons.css'
+
+   import '../all_teams'
+   import '../player_search'
+   import '../registered_players'
+
+   Rails.start()
+   Turbolinks.start()
+   ActiveStorage.start()
+
+   Vue.use(ElementUI)
+   Vue.use(Vuetify)
+   ```
+
+3. **`app/javascript/channels/index.js` の `require.context(...)` を `import.meta.glob(...)` に書き換える**（Vueとは無関係のActionCableブートストラップ用ヘルパー。現状 `*_channel.js` に該当するファイルは存在しないため実害はまだ出ていないが、`require.context` はwebpack専用APIでありVite上では単純に `ReferenceError` になる）。
+   ```javascript
+   // Load all the channels within this directory and all subdirectories.
+   // Channel files must be named *_channel.js.
+
+   const channels = import.meta.glob('./**/*_channel.js', { eager: true })
+   ```
+
+**実装メモ（Step 4検証で追加判明した2件、いずれも `vite.config.mts` の設定のみで解決。`.vue`ファイルは無変更）:**
+
+4. **（試行→棄却）`resolve.dedupe: ['vue']` は効果なしと実証済み**。当初の仮説: `element-ui` の `lib/element-ui.common.js` は webpack でプリバンドルされたCJS塊（`/******/ (function(modules) { // webpackBootstrap` で始まる）であり、内部で `require("vue")` を呼んでいる。この呼び出しが `vue` の `package.json` の `"main"` フィールド（`dist/vue.runtime.common.js`）を解決する一方、`.vue` ファイル側の `import Vue from 'vue'` は `@vitejs/plugin-vue2` が `vue/dist/vue.runtime.esm.js` へエイリアスするため、物理的に異なる2つのVueビルドが同一バンドルに混入しVuetifyが `Multiple instances of Vue detected` で初期化に失敗する——という筋は正しかった。しかし `resolve.dedupe` を適用しても **ビルド成果物のSHA1が1バイトも変わらなかった**（`dedupe` に実在しないパッケージ名を入れても同じSHA1になることで実証）。理由: `dedupe` はディスク上に複数コピーが存在する場合の解決先統一機構であり、今回は `node_modules/vue` は1つしかない。実際の原因はCJS-interop経路とESMエイリアス経路の解決パイプライン自体が分岐している構造的な問題であり、`dedupe` が効くケースではなかった。
+5. **`define: { 'process.env.NODE_ENV': ... }` は無害だが根本解決にはならない**。`vue-simple-suggest` 内の問題箇所は `process.env.NODE_ENV` という文字列一致ではなく裸の `process` 参照（`process&&~"production".indexOf(...)`）であり、`define` の文字列置換の対象外だった。実害は非致命的（`PlayerSearch.vue` 自体は描画される）と確認済みのため、これは既知の軽微な問題として残し、深追いしない。
+6. **根本対応: `element-ui` 依存を完全に削除する。** `AllTeams.vue` ツリーで実際に `element-ui` を使っているのは `TeamPlayers.vue` の `<el-table>` 一箇所のみ。Phase 4の元々の計画（UIライブラリ移行）でもElement UIはどのみち置換対象だったため、この箇所を前倒しで **Vuetifyの `v-simple-table`**（既存の Vuetify 依存だけで完結する軽量テーブルコンポーネント、追加パッケージ不要）に置き換え、`element-ui` を entrypoint・`package.json` から完全に削除する。これによりバンドルから問題の webpackプリバンドル済みCJS塊自体が消え、Vue重複インスタンス問題の根本原因が解消する。この変更は `.vue` ファイルのテンプレートに触れる（当初の「Vue無改修」原則からの部分的な逸脱）が、ユーザー承認済み。
+
+   `TeamPlayers.vue` の該当箇所（野手・投手それぞれ）を以下のように置き換える:
+   ```html
+   <v-simple-table>
+     <template v-slot:default>
+       <thead>
+         <tr>
+           <th>背番号</th>
+           <th>名前</th>
+           <th></th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr v-for="player in teamBatters[0]" :key="player.id">
+           <td>{{ player.number }}</td>
+           <td>{{ player.name }}</td>
+           <td>
+             <register-button :selected-player-id="player.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
+           </td>
+         </tr>
+       </tbody>
+     </template>
+   </v-simple-table>
+   ```
+   （投手側も同様に `teamPitchers[0]` / `'pitchers'` で複製する）
+
+   `<style scoped>` の `/deep/ .el-table th>.cell` / `/deep/ .el-table td>.cell` は、もう `el-table` の内部DOMを深く貫通する必要がないため（`v-simple-table` のスロット内は自コンポーネントのテンプレートそのもの）、素の `th` / `td` セレクタに単純化する:
+   ```css
+   th {
+     font-size: 1rem;
+   }
+   td {
+     font-size: 1.3rem;
+     padding: 4px 0;
+   }
+   ```
+
+   併せて以下を削除する:
+   - `app/javascript/entrypoints/application.js` の `import ElementUI from 'element-ui'` / `Vue.use(ElementUI)` / `import 'element-ui/lib/theme-chalk/index.css'`
+   - `package.json` の `element-ui` 依存（`yarn remove element-ui`）
+
+   `vite.config.mts` から `resolve.dedupe: ['vue']` は（効果がないため）削除してよい。`define` の `process.env.NODE_ENV` は無害な追加ハードニングとして残す。
+
+7. **（element-ui削除後も残った本丸）Vuetify自体が同一クラスの問題を抱えていた。** `node_modules/vuetify/dist/vuetify.js`（`package.json` の `main`/`module` 両方がこのファイルを指す）は `module.exports = factory(require("vue"))` という webpack UMD形式で、element-uiと全く同じ構造。Vuetifyはアプリ全体で使われる中核UIフレームワークであり「削除」という選択肢はない。
+
+   **対応方針: `vuetify` を `vuetify/lib`（コンポーネントごとの生ソースツリー、真のESM形式）へ別名解決（alias）する。** Vuetifyを手放す必要はなく、同一パッケージ内の別のビルド形式に向き先を変えるだけ。`vuetify/lib/framework.js` は `export default class Vuetify` を持ち、`Vue.use(Vuetify)` + `new Vuetify()` という既存の使い方に対してAPI互換（構造確認済み）。
+
+   ```typescript
+   resolve: {
+     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+     alias: [
+       { find: /^vuetify$/, replacement: 'vuetify/lib' },
+     ],
+   },
+   ```
+   （プレーン文字列 `'vuetify'` では前方一致になり `import 'vuetify/dist/vuetify.min.css'` まで誤って書き換えてしまうため、正規表現での完全一致指定が必須）
+
+   **副作用: `vuetify/lib` 配下の各コンポーネントは生の `.sass` ファイルを直接importする設計であり、このアプリには本物のDart Sassコンパイラ（`sass` パッケージ）が一度も導入されたことがなかった**（`node-sass` は既に削除済み、`sass` は未導入）。そのままビルドすると `sass.compileStringAsync is not a function` というAPI不整合が出る。対応: `sass` パッケージを devDependencies に明示的に追加する（`yarn add -D sass`。バージョンは固定せずyarnに最新を解決させる。Dart Sassのmodern API（`compileStringAsync`等）は概ね1.45以降に存在するため、素直に最新を入れれば通るはず）。
+
+   **併せて `app/javascript/entrypoints/application.js` から `import 'vuetify/dist/vuetify.min.css'` を削除する。** `vuetify/lib` 経由にすると各コンポーネントの `.sass` が個別にコンパイル・バンドルされるため、UMD版の事前コンパイル済みCSSを重ねて読み込むと二重適用・競合の原因になる。
+
+   このアプリはVuetifyのデフォルトテーマをそのまま使っており（`vuetify` variables のカスタマイズ用SCSSファイルは存在しない）、`additionalData` のようなグローバル変数注入設定は不要と見込まれる。
+
+   **実装メモ（バージョン固定への訂正）:** 実際には `sass` は「バージョン固定せず最新解決」ではなく `1.99.0` にキャレットなしで完全固定した。理由: 最新の `sass`（1.100系以降）は `chokidar@^5.0.0` に依存するようになり、これが `engines.node: ">=20.19.0"` を要求するため、開発機のNode 18.18.2では `yarn add` がエンジンチェックで失敗する。`chokidar@^4.0.0`（Node >=14.16で動作）に依存する最後のリリースが `1.99.0` であり、これを厳密に指定した（`^1.99.0` は依然として1.100系以降に解決されてしまうため、キャレットなしの完全固定が必須）。Task 2の`vite`バージョン固定と同じ理由・同じ解消条件（Node 18を使い続ける環境が残っている限りは固定を維持し、Task 6でNode 20に上げた際に見直す）。
+
+8. **（`vuetify/lib`移行に伴う追加判明事項）`vuetify/lib` の tree-shakeable `install()` はコンポーネント・ディレクティブを明示的に渡さないと何も登録しない。** UMD版 (`dist/vuetify.js`) は内部で全コンポーネントを自己登録していたが、`vuetify/lib` はa-la-carte設計のため `Vue.use(Vuetify)` を引数なしで呼ぶと `<v-app>` 等のタグがVueに認識されず、素のカスタム要素として描画されてしまう。`app/javascript/entrypoints/application.js` で以下のように全コンポーネント・ディレクティブを明示登録する（UMD版の「全部入り」挙動を再現するだけで、tree-shakingの最適化は今回は追求しない）:
+   ```javascript
+   import * as VuetifyComponents from 'vuetify/lib/components'
+   import * as VuetifyDirectives from 'vuetify/lib/directives'
+
+   Vue.use(Vuetify, { components: VuetifyComponents, directives: VuetifyDirectives })
+   ```
+
+9. **element-ui の完全削除に伴い、テンプレート外（JSメソッド呼び出し）の利用箇所が2種類残っていたことが判明。** 当初の監査は `<el-table>` のようなテンプレートタグのみを対象にしており、以下を見落としていた:
+   - `<el-button>` タグ（`RegisteredBatters.vue` / `RegisteredPitchers.vue` の「比較する」「解除する」ボタン、計4箇所）→ `<v-btn color="primary" small rounded>` / `<v-btn color="error" small rounded>` へ機械的に置換（`<el-table>`と同種の対応のため独立の承認なしで実施）
+   - `this.$notify({title, message, type})`（Element UI の Notification API。`RegisterButton.vue`, `RegisteredBatters.vue`, `RegisteredPitchers.vue`, `PlayerSearch.vue` の計5箇所）→ 同一シグネチャを維持したまま Vuetify の `v-snackbar` で再実装する新規ファイル `app/javascript/notify_plugin.js` を追加。単一のホストVueインスタンスを `document.body` 直下にマウントし、`all_teams.js` / `player_search.js` / `registered_players.js` の3つの独立したVueルートから共有する。呼び出し側（`.vue`ファイル）は無改修。
+
+   置換完了後、全`.vue`ファイルに `<el-[a-z-]+` パターンの残存がないことをスキャンして確認済み。
+
+   併せて、置換済みで不要になった `.el-button { color: white; font-weight: bold; }` という死んだCSSセレクタが `RegisteredBatters.vue` / `RegisteredPitchers.vue` の scoped style に残っていたため削除した（別コミット）。
+
+10. **比較モーダルの開閉トランジション中にクリックが取りこぼされるflakyテストを修正。** `registered_players_spec.rb` の「比較するボタンをクリックした時」の `before` ブロックで、`click_on '比較する'` の直後に `.mdi-close-circle` をクリックする別テストが、Vuetifyダイアログの開くトランジション（フェード/スケール、約300ms）が完了する前にクリックを発行してしまい、稀に取りこぼされていた（診断: 失敗時に `.v-dialog__content--active` がまだ付与されていない状態でクリックが実行されていたことを実測で確認）。共通の `before` ブロックに `expect(page).to have_selector('.v-card.v-sheet.theme--light', text: '前田 智徳')` を追加し、ダイアログの描画完了を待ってから後続の操作・検証に進むよう修正（アプリコード側の変更ではなく、Capybaraの標準的な待機パターンをテスト側に追加しただけ）。
+
+最終的な `vite.config.mts`:
+```typescript
+import { defineConfig } from 'vite'
+import RubyPlugin from 'vite-plugin-ruby'
+import vue2 from '@vitejs/plugin-vue2'
+
+export default defineConfig({
+  resolve: {
+    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    alias: [
+      { find: /^vuetify$/, replacement: 'vuetify/lib' },
+    ],
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
+  plugins: [
+    RubyPlugin(),
+    vue2(),
+  ],
+})
+   ```
+
+- [ ] **Step 3: フロントエンド開発サーバーを起動し、手動で疎通確認**
+
+別ターミナルで Vite dev server を起動:
+
+```bash
+bin/vite dev
+```
+
+Expected: `VITE vX.X.X ready` のようなログが出て `Local: http://localhost:3036/` が表示される
+
+同時に Rails サーバーを起動し、ブラウザで以下を確認する:
+
+```bash
+bundle exec rails s
+```
+
+- `http://localhost:3000/players`（AllTeams.vue がマウントされるページ）でチーム一覧・選手検索が表示される
+- `http://localhost:3000/registered_players`（ログイン後）でお気に入り選手一覧が表示される
+- ブラウザの開発者ツールのコンソールにエラーが出ていない
+
+- [ ] **Step 4: システムテストスイートを実行し、実際のブラウザ経由でVue部分の描画・操作が壊れていないことを確認**
+
+```bash
+bundle exec rspec spec/system
+```
+
+Expected: `authentication_spec.rb`, `login_spec.rb`, `registered_players_spec.rb`, `team_players_spec.rb` を含む全システムテストが `0 failures` でパスする（これらのテストは実ブラウザでVueマウント部分のUIを操作するため、Vite移行によるレンダリング崩れがあればここで検出される）
+
+- [ ] **Step 5: 全テストスイートを実行**
+
+```bash
+bundle exec rspec
+```
+
+Expected: 全件パス
+
+- [ ] **Step 6: コミット**
+
+```bash
+git add app/javascript/entrypoints app/views/layouts/application.html.slim
+git commit -m "feat: Webpackerのpack tagからVite tagへ切り替え、エントリポイントをentrypoints/へ移動"
+```
+
+---
+
+### Task 4: Webpacker を完全に撤去する
+
+**Files:**
+- Modify: `Gemfile`, `Gemfile.lock`
+- Modify: `package.json`, `yarn.lock`
+- Delete: `config/webpacker.yml`, `config/webpack/`, `bin/webpack`, `bin/webpack-dev-server`
+- Modify: `config/boot.rb`
+
+- [ ] **Step 1: Gemfile から webpacker を削除**
+
+`Gemfile` から以下の2行を削除:
+
+```ruby
+# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
+gem 'webpacker', '~> 4.0'
+```
+
+```bash
+bundle install
+```
+
+- [ ] **Step 2: package.json から webpacker 関連パッケージを削除**
+
+```bash
+yarn remove @rails/webpacker vue-loader file-loader webpack-dev-server
+```
+
+- [ ] **Step 3: Webpacker の設定ファイル・binスタブを削除**
+
+```bash
+git rm -r config/webpacker.yml config/webpack bin/webpack bin/webpack-dev-server
+```
+
+- [ ] **Step 4: `config/boot.rb` から Phase 1 の monkey-patch を除去**
+
+`config/boot.rb` を以下の内容に置き換える（`require 'logger'` は Rails 6.1 + Ruby 3.2 対応のため Phase 4 後も残す。YAML alias 対応のカスタム `Bootsnap.setup` 呼び出しと `YAML.load_file` の再定義は webpacker 4.x の内部YAML専用の暫定対処だったため、標準の `require 'bootsnap/setup'` に戻す）:
+
+```ruby
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+
+require 'bundler/setup' # Set up gems listed in the Gemfile.
+require 'logger' # Rails 6.1 + Ruby 3.2: Logger は stdlib gem 化されたため明示 require が必要
+require 'bootsnap/setup' # Speed up boot time by caching expensive operations.
+```
+
+- [ ] **Step 5: 全テストスイートを実行し、Webpacker撤去による破壊がないことを確認**
+
+```bash
+bundle exec rspec
+```
+
+Expected: 全件パス
+
+- [ ] **Step 6: rubocop を実行**
+
+```bash
+bundle exec rubocop
+```
+
+Expected: `no offenses detected`
+
+- [ ] **Step 7: コミット**
+
+```bash
+git add Gemfile Gemfile.lock package.json yarn.lock config/boot.rb
+git commit -m "chore: Webpackerを完全に撤去"
+```
+
+**実装メモ（PRのCI実行で判明した2件の見逃し。いずれもローカル検証の構造的な盲点が原因）:**
+
+1. **`bin/vite`（vite installerが生成）に9件のrubocop違反があった。** ローカルの`bundle exec rubocop`（引数なしのフルスキャン）は`bin/`配下の拡張子なしスクリプト（`bin/vite`含む計8ファイル）をなぜか対象から外しており、CIだけが検出した。`bundle exec rubocop bin/`のように明示的にパスを指定すると正しく検出できる。原因は特定のフックではなく、rubocopの自動ファイル検出そのものの挙動差。`bundle exec rubocop -A bin/`で自動修正した。
+2. **CIの`bin/vite build`ステップが`bin/bundle`経由でGemfile.lockの`BUNDLED WITH 2.5.15`を厳密に要求し、`rubygems: latest`設定のCI環境（bundler 4.0.15のみインストール）でactivate失敗していた。** `bundle exec rspec`等の他のステップは`bin/bundle`を経由しないため無事だった。CIの該当ステップを`bin/vite build`→`bundle exec vite build`に変更して回避した。
+3. **`postcss.config.js`（Webpacker時代からの既存ファイル、このブランチでは無改修）が要求する`postcss-import`/`postcss-flexbugs-fixes`/`postcss-preset-env`が`package.json`に一度も明記されておらず、Task 4で削除した`@rails/webpacker`の推移的依存として密かにインストールされていたことが判明。** worktree自身の`node_modules`では（Task 4適用後の正しい状態として）これらが存在しないが、worktreeがメインリポジトリのディレクトリ配下にネストしているため、Node.jsの`require()`解決が親ディレクトリ（メインリポジトリの`node_modules`、Task 4未適用でwebpacker由来のこれらパッケージが残存）まで遡って偶然発見しており、ローカルのViteビルド検証はずっとこの構造的な偶然に支えられていた。CI（独立したチェックアウト）で初めて`[vite:css] Cannot find module 'postcss-import'`として顕在化。3パッケージを明示的にdevDependenciesへ追加して解消（`postcss-preset-env`は最新版が`@csstools/postcss-color-function`経由でNode >=20.19.0を要求するため、Task 2/Task 3の`vite`/`sass`と同じ理由で`10.6.1`に固定）。
+
+```bash
+git add bin/vite .github/workflows/ci.yml package.json yarn.lock
+git commit -m "fix: bin/viteのrubocop違反修正、CIのbundle exec vite build化、不足していたpostcssプラグインの追加"
+```
+
+---
+
+### Task 5: Docker / 環境変数まわりを整理する
+
+**目的:** Webpacker がコンテナ内で `bin/webpack-dev-server` を実行し、host 上の Rails から見えるようにするために `WEBPACKER_DEV_SERVER_HOST` を使っていた。Vite の dev server は host 上で直接動かす方式に切り替え、この複雑さ自体を無くす。
+
+**Files:**
+- Modify: `docker-compose.yml`
+- Modify: `.envrc`
+
+- [ ] **Step 1: docker-compose.yml から webpacker サービスを削除**
+
+`docker-compose.yml` を以下の内容に置き換える:
+
+```yaml
+version: '3'
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: prospects_watcher
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: prospects_watcher_development
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    ports:
+      - '5433:5432'
+
+volumes:
+  db-data:
+```
+
+- [ ] **Step 2: .envrc から WEBPACKER_DEV_SERVER_HOST を削除（実行不可・手動作業に変更）**
+
+`.envrc` から以下の行を削除する想定だった:
+
+```
+export WEBPACKER_DEV_SERVER_HOST=prospects-watcher
+```
+
+**実装メモ（この計画のミスに気づいたため方針変更）:** `.envrc` は `.gitignore` 対象であり、この worktree 上には実体が存在しない（direnv は親ディレクトリを遡ってメインリポジトリ直下の実体を読みに行く）。つまり `.envrc` の変更はそもそもこのブランチのコミットに含めることが原理的にできない。
+
+Task 5実装時、担当エージェントがこの制約に気づき、メインリポジトリ側の実体ファイルを直接編集してしまった（worktree分離の趣旨に反する操作）。ユーザーに確認の上、その編集は元の状態に復元し、**この行の削除は「本ブランチがmasterにマージされる際の手動作業」として先送りする**方針とした（理由: masterの`docker-compose.yml`はまだwebpackerサービスに`WEBPACKER_DEV_SERVER_HOST`を渡しており、マージ前にこの行を消すとmaster上での開発フローに影響が出る可能性があるため）。
+
+したがって、このステップはworktree内では何も実行しない。`docker-compose.yml`（Step 1）のみがこのTaskの実質的な成果物であり、`.envrc`の当該行削除は本計画完了時（PRマージ時）にユーザー自身が手動で行うこと。
+
+- [ ] **Step 3: `docker compose up` で DB のみ起動することを確認**
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Expected: `db` サービスのみが起動している（`webpacker` サービスが存在しないこと）
+
+- [ ] **Step 4: host 上で `bin/vite dev` + `bundle exec rails s` を起動し、Task 3 Step 3 と同様の手動疎通確認を再実施**
+
+```bash
+bin/vite dev &
+bundle exec rails s
+```
+
+Expected: `http://localhost:3000` の各ページが問題なく表示される
+
+- [ ] **Step 5: コミット**
+
+```bash
+git add docker-compose.yml .envrc
+git commit -m "chore: docker-composeからwebpackerサービスを削除、Vite dev serverはhost上で直接実行する方式に変更"
+```
+
+---
+
+### Task 6: CI ワークフローを更新する
+
+**Files:**
+- Modify: `.github/workflows/ci.yml`
+
+- [ ] **Step 1: Node のバージョンを 20 に上げる（Vite 5+ は Node 18 以上が必須）**
+
+`.github/workflows/ci.yml` の以下の箇所:
+
+```yaml
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: yarn
+```
+
+を以下に変更:
+
+```yaml
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+```
+
+- [ ] **Step 2: webpacker:compile ステップを vite build に置き換える**
+
+以下の箇所:
+
+```yaml
+      - name: Compile webpack assets
+        run: bundle exec rails webpacker:compile
+```
+
+を以下に変更:
+
+```yaml
+      - name: Build frontend assets
+        run: bin/vite build
+```
+
+- [ ] **Step 3: ローカルで RAILS_ENV=test を指定して同等のビルドが通ることを確認（CI環境の代替確認）**
+
+```bash
+RAILS_ENV=test bin/vite build
+```
+
+Expected: `vite v.X.X.X building for production...` のあと `built in ...` で正常終了し、`public/vite-test/` 配下にビルド成果物が生成される
+
+- [ ] **Step 4: コミット**
+
+```bash
+git add .github/workflows/ci.yml
+git commit -m "ci: Node 20に更新し、vite buildでフロントエンド資産をビルドするよう変更"
+```
+
+- [ ] **Step 5: リモートにpushしてCIが実際に緑になることを確認**
+
+（pushはユーザーに確認の上で実施すること。CI結果は `gh run list` / `gh run watch` で確認する）
+
+---
+
+### Task 7: 不要ファイルの掃除
+
+**Files:**
+- Delete: `package-lock.json`
+
+- [ ] **Step 1: 使われていない package-lock.json を削除する**
+
+このリポジトリは `yarn.lock` を正としている（CI も `yarn install --frozen-lockfile` を使用）。`package-lock.json` は2023年3月から更新されておらず、npm を使う運用は行われていない。
+
+```bash
+git rm package-lock.json
+```
+
+- [ ] **Step 2: yarn install が引き続き問題なく通ることを確認**
+
+```bash
+yarn install --frozen-lockfile
+```
+
+Expected: エラーなく完了
+
+- [ ] **Step 3: コミット**
+
+```bash
+git commit -m "chore: 未使用のpackage-lock.jsonを削除（yarn.lockが正）"
+```
+
+---
+
+### Task 8: ドキュメントを更新する
+
+**Files:**
+- Modify: `CLAUDE.md`
+- Modify: `docs/rails_react_migration_plan.md`
+
+- [ ] **Step 1: CLAUDE.md のスタック表記を更新**
+
+`CLAUDE.md` の以下の行:
+
+```
+**スタック**: Ruby 3.2.11 / Rails 7.0.10 / PostgreSQL / Vue.js 2 + Vuex + Vuetify 2 / Webpacker / Slim
+```
+
+を以下に変更:
+
+```
+**スタック**: Ruby 3.2.11 / Rails 7.0.10 / PostgreSQL / Vue.js 2.7 + Vuex + Vuetify 2 / Vite / Slim
+```
+
+- [ ] **Step 2: CLAUDE.md の Docker環境セクションを更新**
+
+```
+docker compose up   # PostgreSQL (5433) + webpack-dev-server (3035)
+```
+
+を以下に変更:
+
+```
+docker compose up   # PostgreSQL (5433)
+bin/vite dev        # フロントエンド開発サーバー（HMR）。host上で直接実行する
+```
+
+`.envrc` の説明箇条書きから `WEBPACKER_DEV_SERVER_HOST=prospects-watcher` の行を削除する。
+
+- [ ] **Step 3: CLAUDE.md の Commands セクションに vite build を追記**
+
+`# スクレイピング` セクションの前に以下を追記:
+
+```
+# フロントエンドの本番ビルド確認
+bin/vite build
+```
+
+- [ ] **Step 4: docs/rails_react_migration_plan.md の進行ステータスを更新**
+
+`## 進行ステータス` の以下の行:
+
+```
+- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行 ← **次の着手ポイント**
+```
+
+を以下に変更（Phase 4自体はまだ未完了なので、サブステップの進捗を注記する形にする）:
+
+```
+- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行
+  - [x] Step 1: Webpacker → Vite 移行 ✅
+  - [ ] Step 2以降: Reactストラングラー導入 ← **次の着手ポイント**
+```
+
+- [ ] **Step 5: コミット**
+
+```bash
+git add CLAUDE.md docs/rails_react_migration_plan.md
+git commit -m "docs: Webpacker→Vite移行完了をCLAUDE.mdとマイグレーション計画に反映"
+```
+
+---
+
+### Task 9: 最終確認
+
+- [ ] **Step 1: 全テストスイートを実行**
+
+```bash
+bundle exec rspec
+```
+
+Expected: 全件パス（Task開始前と同じ件数、失敗0件）
+
+- [ ] **Step 2: rubocop を実行**
+
+```bash
+bundle exec rubocop
+```
+
+Expected: `no offenses detected`
+
+- [ ] **Step 3: クリーンな状態から `bin/setup` 相当のセットアップが通ることを確認（新規開発者のオンボーディングが壊れていないか）**
+
+```bash
+bundle install
+yarn install --frozen-lockfile
+bin/rails db:prepare
+```
+
+Expected: エラーなく完了
+
+- [ ] **Step 4: git status がクリーンであることを確認し、このブランチをPR化する準備が整ったことを報告する**
+
+```bash
+git status
+```
+
+Expected: `nothing to commit, working tree clean`
+
+---
+
+## Self-Review メモ
+
+- **Spec coverage**: `docs/rails_react_migration_plan.md` Phase 4 手順1の全項目（vite_rails導入、config/vite.json・vite.config.ts設定、レイアウトタグ置換、Webpacker関連設定の削除）を Task 1〜7 でカバーした。CI・Docker・ドキュメント更新も漏れなくタスク化した。
+- **Placeholder scan**: バージョン番号は `yarn add` コマンドに範囲指定（`^2.7` 等）を委ね、正確な解決済みバージョンをその場で確認する手順にしたことで、不正確な決め打ちバージョンを記載していない。
+- **Type consistency**: `config/vite.json` の `sourceCodeDir` と `vite.config.ts` の設定、レイアウトの `vite_javascript_tag 'application'` が指すファイル名（`entrypoints/application.js`）が一致していることを確認済み。

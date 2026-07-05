@@ -59,7 +59,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
           cache: yarn
 
       - name: Install JS dependencies
@@ -68,8 +68,8 @@ jobs:
       - name: Set up database
         run: bin/rails db:create db:schema:load
 
-      - name: Compile webpack assets
-        run: bundle exec rails webpacker:compile
+      - name: Build frontend assets
+        run: bundle exec vite build
 
       - name: Run RSpec
         run: bundle exec rspec

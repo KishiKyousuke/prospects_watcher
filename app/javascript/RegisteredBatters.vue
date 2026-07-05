@@ -37,13 +37,13 @@
             width="600px"
         >
           <template v-slot:activator="{ on, attrs }">
-            <el-button v-bind="attrs" v-on="on" type="primary" size="small" round :disabled="checkedPlayers.length !== 2">比較する</el-button>
+            <v-btn v-bind="attrs" v-on="on" color="primary" small rounded :disabled="checkedPlayers.length !== 2">比較する</v-btn>
           </template>
           <v-card>
             <compare-batter-score-table v-if="checkedPlayers.length === 2" :checked-players="checkedPlayers" @close-modal="dialog = false"></compare-batter-score-table>
           </v-card>
         </v-dialog>
-        <el-button type="danger" round size="small" @click="releaseProcessing">解除する</el-button>
+        <v-btn color="error" rounded small @click="releaseProcessing">解除する</v-btn>
       </div>
     </vue-good-table>
   </div>
@@ -212,11 +212,6 @@ export default {
   position: initial;
   opacity: 1.0;
   pointer-events: auto;
-}
-
-.el-button {
-  color: white;
-  font-weight: bold;
 }
 
 .player-name {
