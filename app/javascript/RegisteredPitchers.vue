@@ -211,11 +211,6 @@ export default {
   pointer-events: auto;
 }
 
-.el-button {
-  color: white;
-  font-weight: bold;
-}
-
 .player-name {
   font-weight: bold;
 }
