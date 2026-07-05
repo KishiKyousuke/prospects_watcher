@@ -4,52 +4,51 @@
       <div class="center">
         <h5>野手</h5>
       </div>
-      <el-table
-          :data="teamBatters[0]"
-          style="width: 100%"
-      >
-        <el-table-column
-            prop="number"
-            label="背番号"
-            min-width="72">
-        </el-table-column>
-        <el-table-column
-            prop="name"
-            label="名前"
-            min-width="168">
-        </el-table-column>
-        <el-table-column
-            min-width="80">
-          <template slot-scope="scope">
-            <register-button :selected-player-id="scope.row.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th>背番号</th>
+              <th>名前</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="player in teamBatters[0]" :key="player.id">
+              <td>{{ player.number }}</td>
+              <td>{{ player.name }}</td>
+              <td>
+                <register-button :selected-player-id="player.id" :player-type="'batters'" :registered-players="registeredPlayers"></register-button>
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
     </v-col>
     <v-col cols="6">
       <div class="center">
         <h5>投手</h5>
       </div>
-      <el-table
-          :data="teamPitchers[0]"
-          style="width: 100%">
-        <el-table-column
-            prop="number"
-            label="背番号"
-            min-width="72">
-        </el-table-column>
-        <el-table-column
-            prop="name"
-            label="名前"
-            min-width="168">
-        </el-table-column>
-        <el-table-column
-            min-width="80">
-          <template slot-scope="scope">
-            <register-button :selected-player-id="scope.row.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></register-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th>背番号</th>
+              <th>名前</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="player in teamPitchers[0]" :key="player.id">
+              <td>{{ player.number }}</td>
+              <td>{{ player.name }}</td>
+              <td>
+                <register-button :selected-player-id="player.id" :player-type="'pitchers'" :registered-players="registeredPlayers"></register-button>
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
     </v-col>
   </v-row>
 </template>
@@ -100,10 +99,10 @@ h5 {
   font-family: Helvetica,Arial,'メイリオ','ヒラギノ W','Hiragino Sans','ヒラギノ角ゴシック','ＭＳ Ｐゴシック',sans-serif;;
 }
 
-/deep/ .el-table th>.cell {
+th {
   font-size: 1rem;
 }
-/deep/ .el-table td>.cell {
+td {
   font-size: 1.3rem;
   padding: 4px 0;
 }

@@ -1,20 +1,23 @@
-require("@rails/ujs").start()
-require("turbolinks").start()
-require("@rails/activestorage").start()
-require("channels")
-
+import Rails from '@rails/ujs'
+import Turbolinks from 'turbolinks'
+import * as ActiveStorage from '@rails/activestorage'
 import Vue from 'vue'
-import ElementUI from 'element-ui'
 import Vuetify from 'vuetify'
+import * as VuetifyComponents from 'vuetify/lib/components'
+import * as VuetifyDirectives from 'vuetify/lib/directives'
+import NotifyPlugin from '../notify_plugin'
 
-Vue.use(ElementUI)
-Vue.use(Vuetify)
-
+import '../channels'
 import '../css/application.css'
-import 'element-ui/lib/theme-chalk/index.css'
-import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 import '../all_teams'
 import '../player_search'
 import '../registered_players'
+
+Rails.start()
+Turbolinks.start()
+ActiveStorage.start()
+
+Vue.use(Vuetify, { components: VuetifyComponents, directives: VuetifyDirectives })
+Vue.use(NotifyPlugin, { vuetify: new Vuetify() })
