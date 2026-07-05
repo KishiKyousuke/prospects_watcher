@@ -69,7 +69,7 @@ jobs:
         run: bin/rails db:create db:schema:load
 
       - name: Build frontend assets
-        run: bin/vite build
+        run: bundle exec vite build
 
       - name: Run RSpec
         run: bundle exec rspec
