@@ -360,6 +360,8 @@ import '../registered_players'
 
    このアプリはVuetifyのデフォルトテーマをそのまま使っており（`vuetify` variables のカスタマイズ用SCSSファイルは存在しない）、`additionalData` のようなグローバル変数注入設定は不要と見込まれる。
 
+   **実装メモ（バージョン固定への訂正）:** 実際には `sass` は「バージョン固定せず最新解決」ではなく `1.99.0` にキャレットなしで完全固定した。理由: 最新の `sass`（1.100系以降）は `chokidar@^5.0.0` に依存するようになり、これが `engines.node: ">=20.19.0"` を要求するため、開発機のNode 18.18.2では `yarn add` がエンジンチェックで失敗する。`chokidar@^4.0.0`（Node >=14.16で動作）に依存する最後のリリースが `1.99.0` であり、これを厳密に指定した（`^1.99.0` は依然として1.100系以降に解決されてしまうため、キャレットなしの完全固定が必須）。Task 2の`vite`バージョン固定と同じ理由・同じ解消条件（Node 18を使い続ける環境が残っている限りは固定を維持し、Task 6でNode 20に上げた際に見直す）。
+
 8. **（`vuetify/lib`移行に伴う追加判明事項）`vuetify/lib` の tree-shakeable `install()` はコンポーネント・ディレクティブを明示的に渡さないと何も登録しない。** UMD版 (`dist/vuetify.js`) は内部で全コンポーネントを自己登録していたが、`vuetify/lib` はa-la-carte設計のため `Vue.use(Vuetify)` を引数なしで呼ぶと `<v-app>` 等のタグがVueに認識されず、素のカスタム要素として描画されてしまう。`app/javascript/entrypoints/application.js` で以下のように全コンポーネント・ディレクティブを明示登録する（UMD版の「全部入り」挙動を再現するだけで、tree-shakingの最適化は今回は追求しない）:
    ```javascript
    import * as VuetifyComponents from 'vuetify/lib/components'
