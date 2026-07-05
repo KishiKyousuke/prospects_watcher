@@ -183,6 +183,8 @@ git add Gemfile Gemfile.lock package.json yarn.lock vite.config.ts config/vite.j
 git commit -m "chore: vite_rails を追加導入（Webpackerとまだ併存、切り替えは次コミット）"
 ```
 
+**実装メモ:** 実際の実装では `vite` は installer デフォルトの `^8.1.3` ではなく `^6.4.3` に固定した。理由は開発機の Node が 18.18.2 であり、Vite 8 の `engines.node`（`^20.19.0 || >=22.12.0`）を満たさず `yarn add` がエンジンチェックで失敗するため。この固定は Task 6 で CI/開発環境の Node を 20 系以上に上げた際に見直すこと（Node 18 を使い続ける環境が残っている限りは `^6` のままにする）。
+
 ---
 
 ### Task 3: エントリポイントを移動し、レイアウトを Vite タグに切り替える（本丸のカットオーバー）
