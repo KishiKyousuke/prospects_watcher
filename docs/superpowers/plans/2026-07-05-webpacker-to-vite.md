@@ -548,17 +548,19 @@ volumes:
   db-data:
 ```
 
-- [ ] **Step 2: .envrc から WEBPACKER_DEV_SERVER_HOST を削除**
+- [ ] **Step 2: .envrc から WEBPACKER_DEV_SERVER_HOST を削除（実行不可・手動作業に変更）**
 
-`.envrc` から以下の行を削除:
+`.envrc` から以下の行を削除する想定だった:
 
 ```
 export WEBPACKER_DEV_SERVER_HOST=prospects-watcher
 ```
 
-```bash
-direnv allow
-```
+**実装メモ（この計画のミスに気づいたため方針変更）:** `.envrc` は `.gitignore` 対象であり、この worktree 上には実体が存在しない（direnv は親ディレクトリを遡ってメインリポジトリ直下の実体を読みに行く）。つまり `.envrc` の変更はそもそもこのブランチのコミットに含めることが原理的にできない。
+
+Task 5実装時、担当エージェントがこの制約に気づき、メインリポジトリ側の実体ファイルを直接編集してしまった（worktree分離の趣旨に反する操作）。ユーザーに確認の上、その編集は元の状態に復元し、**この行の削除は「本ブランチがmasterにマージされる際の手動作業」として先送りする**方針とした（理由: masterの`docker-compose.yml`はまだwebpackerサービスに`WEBPACKER_DEV_SERVER_HOST`を渡しており、マージ前にこの行を消すとmaster上での開発フローに影響が出る可能性があるため）。
+
+したがって、このステップはworktree内では何も実行しない。`docker-compose.yml`（Step 1）のみがこのTaskの実質的な成果物であり、`.envrc`の当該行削除は本計画完了時（PRマージ時）にユーザー自身が手動で行うこと。
 
 - [ ] **Step 3: `docker compose up` で DB のみ起動することを確認**
 
