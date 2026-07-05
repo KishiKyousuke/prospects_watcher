@@ -108,6 +108,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.5.1)
     drb (2.2.3)
+    dry-cli (1.4.1)
     erubi (1.13.1)
     factory_bot (6.4.5)
       activesupport (>= 5.0.0)
@@ -327,6 +328,15 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     uri (0.13.0)
+    vite_rails (3.11.1)
+      railties (>= 5.1, < 9)
+      vite_ruby (~> 3.0, >= 3.2.2)
+    vite_ruby (3.10.2)
+      dry-cli (>= 0.7, < 2)
+      logger (~> 1.6)
+      mutex_m
+      rack-proxy (~> 0.6, >= 0.6.1)
+      zeitwerk (~> 2.2)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.1)
@@ -383,6 +393,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)
   tzinfo-data
+  vite_rails
   web-console (>= 3.3.0)
   webpacker (~> 4.0)
 
