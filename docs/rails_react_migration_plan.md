@@ -17,7 +17,9 @@ Claude Code は新規セッションでこのファイルを読み、現在の�
 - [x] Phase 1 — Ruby 3.0.6 → 3.2.11
 - [x] Phase 2 — Rails 6.0 → 6.1
 - [x] Phase 3 — Rails 6.1 → 7.0（Webpackerは温存）
-- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行 ← **次の着手ポイント**
+- [ ] Phase 4 — Webpacker脱却 + Vue → React 移行
+  - [x] 手順1: Webpacker → Vite 移行 ✅
+  - [ ] 手順2以降: Reactストラングラー導入 ← **次の着手ポイント**
 - [ ] Phase 5 — Rails 7.0 → 7.1 → 7.2 → 8.0
 
 着手・完了したフェーズはチェックを更新すること。
