@@ -36,7 +36,7 @@ export default {
           props: {
             value: this.show,
             color: this.color,
-            timeout: 4000,
+            timeout: 4000, // Element UI Notification のデフォルトに近い表示時間として設定
             top: true,
             right: true
           },
@@ -53,6 +53,9 @@ export default {
     Vue.prototype.$notify = function ({ title, message, type }) {
       state.title = title
       state.message = message
+      if (!COLORS[type]) {
+        console.warn(`$notify: unknown type "${type}", falling back to "success"`)
+      }
       state.color = COLORS[type] || COLORS.success
       state.show = true
     }

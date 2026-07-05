@@ -106,4 +106,15 @@ td {
   font-size: 1.3rem;
   padding: 4px 0;
 }
+
+/* el-table-column の min-width 指定 (背番号/名前/登録ボタン列) を再現 */
+th:nth-child(1) {
+  min-width: 72px;
+}
+th:nth-child(2) {
+  min-width: 168px;
+}
+th:nth-child(3) {
+  min-width: 80px;
+}
 </style>
