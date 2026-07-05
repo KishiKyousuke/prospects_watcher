@@ -292,6 +292,32 @@ import '../registered_players'
    const channels = import.meta.glob('./**/*_channel.js', { eager: true })
    ```
 
+**実装メモ（Step 4検証で追加判明した2件、いずれも `vite.config.mts` の設定のみで解決。`.vue`ファイルは無変更）:**
+
+4. **`resolve.dedupe: ['vue']` を追加**。原因: `element-ui` の `lib/element-ui.common.js` は webpack でプリバンドルされたCJS塊（`/******/ (function(modules) { // webpackBootstrap` で始まる）であり、内部で `require("vue")` を呼んでいる。この呼び出しはNode/RollupのCJS解決規則に従い `vue` の `package.json` の `"main"` フィールド（`dist/vue.runtime.common.js`）を解決するが、`.vue` ファイル側の `import Vue from 'vue'` は `@vitejs/plugin-vue2` が `vue/dist/vue.runtime.esm.js` へエイリアスする。結果、**物理的に異なる2つのVueビルドが同一バンドルに混入し**、Vuetifyが `Multiple instances of Vue detected` を検出して初期化に失敗し、`AllTeams.vue` のマウント先が空描画になる。`resolve.dedupe` はVite公式のドキュメント記載機能で、指定パッケージへの全解決経路を単一の実体に強制的に一致させる。
+5. **`define: { 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development') }` を追加**。原因: webpack 4は `process.env.NODE_ENV` をデフォルトでビルド時に埋め込むが、Viteは行わない。`vue-simple-suggest` 等のCJS由来ライブラリが未ガードで `process.env.NODE_ENV` を参照している箇所があり、Vite上では `ReferenceError: process is not defined` になりうる。同種の踏み抜きが他のライブラリでも起こり得るため、ここで先回りして埋める。
+
+最終的な `vite.config.mts`:
+```typescript
+import { defineConfig } from 'vite'
+import RubyPlugin from 'vite-plugin-ruby'
+import vue2 from '@vitejs/plugin-vue2'
+
+export default defineConfig({
+  resolve: {
+    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    dedupe: ['vue'],
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
+  plugins: [
+    RubyPlugin(),
+    vue2(),
+  ],
+})
+   ```
+
 - [ ] **Step 3: フロントエンド開発サーバーを起動し、手動で疎通確認**
 
 別ターミナルで Vite dev server を起動:
