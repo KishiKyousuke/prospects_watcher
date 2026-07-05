@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module ProspectsWatcher
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.0
     config.generators do |g|
       g.helper false
       g.assets false
@@ -21,5 +21,7 @@ module ProspectsWatcher
     end
     config.i18n.default_locale = :ja
     config.time_zone = 'Asia/Tokyo'
+    config.active_support.cache_format_version = 7.0
+    config.active_support.disable_to_s_conversion = true
   end
 end
